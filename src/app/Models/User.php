@@ -10,7 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Laragear\WebAuthn\Contracts\WebAuthnAuthenticatable;
 use Laragear\WebAuthn\WebAuthnAuthentication;
-class User extends Authenticatable
+class User extends Authenticatable implements WebAuthnAuthenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, TwoFactorAuthenticatable, WebAuthnAuthentication;

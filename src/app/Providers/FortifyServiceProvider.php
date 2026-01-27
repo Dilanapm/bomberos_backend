@@ -22,16 +22,19 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Redirección post-login por rol (evita /home 404)
+        /**
+         * Redirección post-login por rol (evita /home 404).
+         * Nota: para admin/instructor, tu middleware 2fa.required hará el "gate"
+         * y enviará a /2fa-setup si falta confirmar 2FA.
+         */
         $this->app->singleton(LoginResponseContract::class, function () {
             return new class implements LoginResponseContract {
                 public function toResponse($request)
                 {
                     $user = $request->user();
 
-                    if ($user && $user->hasAnyRole(['admin', 'instructor'])) {
-                        // El middleware 2fa.required se encargará de redirigir a /2fa-setup si falta 2FA
-                        return redirect('/admin-zone');
+                    if ($user->hasAnyRole(['admin', 'instructor'])) {
+                        return redirect('/admin/zone');
                     }
 
                     return redirect('/dashboard');
@@ -45,12 +48,28 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Deshabilitar rutas por defecto de Fortify para registrarlas manualmente con throttling
+        Fortify::ignoreRoutes();
+        
+        // Cargar rutas personalizadas de Fortify con rate limiting
+        require base_path('routes/fortify.php');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Fortify Actions
+        |--------------------------------------------------------------------------
+        */
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Rate limiting (anti brute-force)
+        |--------------------------------------------------------------------------
+        */
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(
                 Str::lower($request->input(Fortify::username())).'|'.$request->ip()
@@ -62,14 +81,40 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(3)->by(($request->session()->get('login.id') ?? 'guest').'|'.$request->ip());
         });
+        RateLimiter::for('password-email', function (Request $request) {
+            $email = (string) $request->input('email');
 
-        // Vistas Blade mínimas (puedes migrarlas a Livewire después)
+            return [
+                Limit::perMinute(3)->by(Str::lower($email).'|'.$request->ip()),
+                Limit::perMinute(10)->by($request->ip()),
+            ];
+        });
+
+        RateLimiter::for('password-reset', function (Request $request) {
+            $email = (string) $request->input('email');
+
+            return [
+                Limit::perMinute(3)->by(Str::lower($email).'|'.$request->ip()),
+                Limit::perMinute(10)->by($request->ip()),
+            ];
+        });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Views (Blade mínimas)
+        |--------------------------------------------------------------------------
+        | Importante: si no defines estas vistas, Fortify lanza errores
+        | "Target [...] is not instantiable".
+        */
         Fortify::loginView(fn () => view('auth.login'));
         Fortify::twoFactorChallengeView(fn () => view('auth.two-factor-challenge'));
+        Fortify::confirmPasswordView(fn () => view('auth.confirm-password'));
+
         Fortify::requestPasswordResetLinkView(fn () => view('auth.forgot-password'));
         Fortify::resetPasswordView(fn (Request $request) => view('auth.reset-password', ['request' => $request]));
 
-        // Solo si vas a permitir registro
+        // Solo si vas a permitir registro (si no, puedes comentar estas 2 líneas)
         Fortify::registerView(fn () => view('auth.register'));
     }
 }

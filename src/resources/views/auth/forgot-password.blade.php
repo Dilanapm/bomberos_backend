@@ -6,11 +6,10 @@
 <h1>Recuperar contraseña</h1>
 
 @if(session('status')) <p>{{ session('status') }}</p> @endif
-@if($errors->any())
-  <ul>
-    @foreach($errors->all() as $e) <li>{{ $e }}</li> @endforeach
-  </ul>
+@if($errors->has('email'))
+  <p style="color:red;">{{ $errors->first('email') }}</p>
 @endif
+
 
 <form method="POST" action="{{ route('password.email') }}">
   @csrf

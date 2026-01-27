@@ -28,6 +28,28 @@ services:
     networks:
       - bomberos_net
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: bomberos_mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"   # UI web
+      - "1025:1025"   # SMTP
+    networks:
+      - bomberos_net
+
+  vite:
+    image: node:20-alpine
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+    command: sh -lc "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+    ports:
+      - "5173:5173"
+    networks:
+      - bomberos_net
+    depends_on:
+      - app
   queue:
     build:
       context: .

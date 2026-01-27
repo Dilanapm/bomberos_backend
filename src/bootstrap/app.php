@@ -13,12 +13,19 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             '2fa.required' => \App\Http\Middleware\EnsureTwoFactorEnabledForPrivilegedRoles::class,
+            'admin.passkey.required' => \App\Http\Middleware\EnsureAdminHasPasskey::class,
             // Spatie Permission Middleware aliases
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
+        $middleware->web(append: [
+        \App\Http\Middleware\LogPasswordResetRequest::class,
+    ]);
     })
+    ->withProviders([
+    App\Providers\EventServiceProvider::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
