@@ -33,14 +33,22 @@ class FortifyServiceProvider extends ServiceProvider
                 {
                     $user = $request->user();
 
-                    if ($user->hasAnyRole(['admin', 'instructor'])) {
+                    if ($user->hasRole('admin')) {
                         return redirect('/admin/zone');
                     }
 
-                    return redirect('/dashboard');
+                    return redirect('/login')->withErrors([
+                        'email' => 'Este usuario no tiene acceso a la plataforma web',
+                    ]);
                 }
             };
         });
+
+        // Redirección después de confirmar 2FA
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\TwoFactorLoginResponse::class,
+            \App\Actions\Fortify\Responses\ConfirmedTwoFactorAuthenticationResponse::class
+        );
     }
 
     /**
@@ -50,9 +58,6 @@ class FortifyServiceProvider extends ServiceProvider
     {
         // Deshabilitar rutas por defecto de Fortify para registrarlas manualmente con throttling
         Fortify::ignoreRoutes();
-        
-        // Cargar rutas personalizadas de Fortify con rate limiting
-        require base_path('routes/fortify.php');
 
         /*
         |--------------------------------------------------------------------------

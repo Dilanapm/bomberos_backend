@@ -24,6 +24,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         '2203a247e6fda86070a5e4e07aed533a' => __DIR__ . '/..' . '/symfony/clock/Resources/now.php',
         '09f6b20656683369174dd6fa83b7e5fb' => __DIR__ . '/..' . '/symfony/polyfill-uuid/bootstrap.php',
         'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
+        '29ffe97919493792170d47eb03a68da9' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/helpers.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
@@ -121,6 +122,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         array (
             'Monolog\\' => 8,
             'Mockery\\' => 8,
+            'MallardDuck\\LucideIcons\\' => 24,
         ),
         'L' =>
         array (
@@ -137,6 +139,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
             'Laravel\\Prompts\\' => 16,
             'Laravel\\Pail\\' => 13,
             'Laravel\\Fortify\\' => 16,
+            'LaravelLang\\Lang\\' => 17,
             'Laragear\\WebAuthn\\' => 18,
             'Laragear\\MetaModel\\' => 19,
         ),
@@ -182,6 +185,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'B' =>
         array (
             'Brick\\Math\\' => 11,
+            'BladeUI\\Icons\\' => 14,
             'BaconQrCode\\' => 12,
         ),
         'A' =>
@@ -405,6 +409,10 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         array (
             0 => __DIR__ . '/..' . '/mockery/mockery/library/Mockery',
         ),
+        'MallardDuck\\LucideIcons\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/mallardduck/blade-lucide-icons/src',
+        ),
         'Livewire\\' =>
         array (
             0 => __DIR__ . '/..' . '/livewire/livewire/src',
@@ -457,6 +465,10 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'Laravel\\Fortify\\' =>
         array (
             0 => __DIR__ . '/..' . '/laravel/fortify/src',
+        ),
+        'LaravelLang\\Lang\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/laravel-lang/lang/src',
         ),
         'Laragear\\WebAuthn\\' =>
         array (
@@ -558,6 +570,10 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         array (
             0 => __DIR__ . '/..' . '/brick/math/src',
         ),
+        'BladeUI\\Icons\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src',
+        ),
         'BaconQrCode\\' =>
         array (
             0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
@@ -573,15 +589,24 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'App\\Actions\\Fortify\\CreateNewUser' => __DIR__ . '/../..' . '/app/Actions/Fortify/CreateNewUser.php',
         'App\\Actions\\Fortify\\PasswordValidationRules' => __DIR__ . '/../..' . '/app/Actions/Fortify/PasswordValidationRules.php',
         'App\\Actions\\Fortify\\ResetUserPassword' => __DIR__ . '/../..' . '/app/Actions/Fortify/ResetUserPassword.php',
+        'App\\Actions\\Fortify\\Responses\\ConfirmedTwoFactorAuthenticationResponse' => __DIR__ . '/../..' . '/app/Actions/Fortify/Responses/ConfirmedTwoFactorAuthenticationResponse.php',
+        'App\\Actions\\Fortify\\SendPasswordResetLinkResponse' => __DIR__ . '/../..' . '/app/Actions/Fortify/SendPasswordResetLinkResponse.php',
         'App\\Actions\\Fortify\\UpdateUserPassword' => __DIR__ . '/../..' . '/app/Actions/Fortify/UpdateUserPassword.php',
         'App\\Actions\\Fortify\\UpdateUserProfileInformation' => __DIR__ . '/../..' . '/app/Actions/Fortify/UpdateUserProfileInformation.php',
+        'App\\Http\\Controllers\\Auth\\CustomPasswordResetLinkController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/CustomPasswordResetLinkController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\WebAuthn\\WebAuthnLoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/WebAuthn/WebAuthnLoginController.php',
         'App\\Http\\Controllers\\WebAuthn\\WebAuthnRegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/WebAuthn/WebAuthnRegisterController.php',
+        'App\\Http\\Middleware\\EnsureAdminHasPasskey' => __DIR__ . '/../..' . '/app/Http/Middleware/EnsureAdminHasPasskey.php',
         'App\\Http\\Middleware\\EnsureTwoFactorEnabledForPrivilegedRoles' => __DIR__ . '/../..' . '/app/Http/Middleware/EnsureTwoFactorEnabledForPrivilegedRoles.php',
+        'App\\Http\\Middleware\\LogPasswordResetRequest' => __DIR__ . '/../..' . '/app/Http/Middleware/LogPasswordResetRequest.php',
+        'App\\Http\\Middleware\\OnlyAdminCanUseWeb' => __DIR__ . '/../..' . '/app/Http/Middleware/OnlyAdminCanUseWeb.php',
+        'App\\Listeners\\LogPasswordReset' => __DIR__ . '/../..' . '/app/Listeners/LogPasswordReset.php',
         'App\\Livewire\\Admin\\Passkeys' => __DIR__ . '/../..' . '/app/Livewire/Admin/Passkeys.php',
+        'App\\Livewire\\Auth\\TwoFactorSetup' => __DIR__ . '/../..' . '/app/Livewire/Auth/TwoFactorSetup.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
+        'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\FortifyServiceProvider' => __DIR__ . '/../..' . '/app/Providers/FortifyServiceProvider.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'BaconQrCode\\Common\\BitArray' => __DIR__ . '/..' . '/bacon/bacon-qr-code/src/Common/BitArray.php',
@@ -646,6 +671,18 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'BaconQrCode\\Renderer\\RendererStyle\\GradientType' => __DIR__ . '/..' . '/bacon/bacon-qr-code/src/Renderer/RendererStyle/GradientType.php',
         'BaconQrCode\\Renderer\\RendererStyle\\RendererStyle' => __DIR__ . '/..' . '/bacon/bacon-qr-code/src/Renderer/RendererStyle/RendererStyle.php',
         'BaconQrCode\\Writer' => __DIR__ . '/..' . '/bacon/bacon-qr-code/src/Writer.php',
+        'BladeUI\\Icons\\BladeIconsServiceProvider' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/BladeIconsServiceProvider.php',
+        'BladeUI\\Icons\\Components\\Icon' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Components/Icon.php',
+        'BladeUI\\Icons\\Components\\Svg' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Components/Svg.php',
+        'BladeUI\\Icons\\Concerns\\RendersAttributes' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Concerns/RendersAttributes.php',
+        'BladeUI\\Icons\\Console\\CacheCommand' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Console/CacheCommand.php',
+        'BladeUI\\Icons\\Console\\ClearCommand' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Console/ClearCommand.php',
+        'BladeUI\\Icons\\Exceptions\\CannotRegisterIconSet' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Exceptions/CannotRegisterIconSet.php',
+        'BladeUI\\Icons\\Exceptions\\SvgNotFound' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Exceptions/SvgNotFound.php',
+        'BladeUI\\Icons\\Factory' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Factory.php',
+        'BladeUI\\Icons\\Generation\\IconGenerator' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Generation/IconGenerator.php',
+        'BladeUI\\Icons\\IconsManifest' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/IconsManifest.php',
+        'BladeUI\\Icons\\Svg' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/Svg.php',
         'Brick\\Math\\BigDecimal' => __DIR__ . '/..' . '/brick/math/src/BigDecimal.php',
         'Brick\\Math\\BigInteger' => __DIR__ . '/..' . '/brick/math/src/BigInteger.php',
         'Brick\\Math\\BigNumber' => __DIR__ . '/..' . '/brick/math/src/BigNumber.php',
@@ -774,6 +811,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'DASPRiD\\Enum\\Exception\\UnserializeNotSupportedException' => __DIR__ . '/..' . '/dasprid/enum/src/Exception/UnserializeNotSupportedException.php',
         'DASPRiD\\Enum\\NullValue' => __DIR__ . '/..' . '/dasprid/enum/src/NullValue.php',
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
+        'Database\\Seeders\\Admin2UserSeeder' => __DIR__ . '/../..' . '/database/seeders/Admin2UserSeeder.php',
         'Database\\Seeders\\AdminUserSeeder' => __DIR__ . '/../..' . '/database/seeders/AdminUserSeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\RolesAndPermissionsSeeder' => __DIR__ . '/../..' . '/database/seeders/RolesAndPermissionsSeeder.php',
@@ -3099,6 +3137,38 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'Laragear\\WebAuthn\\WebAuthnAuthentication' => __DIR__ . '/..' . '/laragear/webauthn/src/WebAuthnAuthentication.php',
         'Laragear\\WebAuthn\\WebAuthnData' => __DIR__ . '/..' . '/laragear/webauthn/src/WebAuthnData.php',
         'Laragear\\WebAuthn\\WebAuthnServiceProvider' => __DIR__ . '/..' . '/laragear/webauthn/src/WebAuthnServiceProvider.php',
+        'LaravelLang\\Lang\\Plugin' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugin.php',
+        'LaravelLang\\Lang\\Plugins\\Breeze\\Master' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Breeze/Master.php',
+        'LaravelLang\\Lang\\Plugins\\Breeze\\V1' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Breeze/V1.php',
+        'LaravelLang\\Lang\\Plugins\\Cashier\\Stripe\\Master' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Cashier/Stripe/Master.php',
+        'LaravelLang\\Lang\\Plugins\\Cashier\\Stripe\\V12' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Cashier/Stripe/V12.php',
+        'LaravelLang\\Lang\\Plugins\\Cashier\\Stripe\\V13' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Cashier/Stripe/V13.php',
+        'LaravelLang\\Lang\\Plugins\\Cashier\\Stripe\\V14' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Cashier/Stripe/V14.php',
+        'LaravelLang\\Lang\\Plugins\\Fortify\\Master' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Fortify/Master.php',
+        'LaravelLang\\Lang\\Plugins\\Fortify\\V1' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Fortify/V1.php',
+        'LaravelLang\\Lang\\Plugins\\Jetstream\\Master' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Jetstream/Master.php',
+        'LaravelLang\\Lang\\Plugins\\Jetstream\\V1' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Jetstream/V1.php',
+        'LaravelLang\\Lang\\Plugins\\Jetstream\\V2' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Jetstream/V2.php',
+        'LaravelLang\\Lang\\Plugins\\Jetstream\\V3' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Jetstream/V3.php',
+        'LaravelLang\\Lang\\Plugins\\Laravel\\Master' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Laravel/Master.php',
+        'LaravelLang\\Lang\\Plugins\\Laravel\\V10' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Laravel/V10.php',
+        'LaravelLang\\Lang\\Plugins\\Laravel\\V9' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Laravel/V9.php',
+        'LaravelLang\\Lang\\Plugins\\Lumen\\Master' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Lumen/Master.php',
+        'LaravelLang\\Lang\\Plugins\\Lumen\\V10' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Lumen/V10.php',
+        'LaravelLang\\Lang\\Plugins\\Lumen\\V9' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Lumen/V9.php',
+        'LaravelLang\\Lang\\Plugins\\Nova\\LogViewer\\Main' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Nova/LogViewer/Main.php',
+        'LaravelLang\\Lang\\Plugins\\Nova\\V3' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Nova/V3.php',
+        'LaravelLang\\Lang\\Plugins\\Nova\\V4' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Nova/V4.php',
+        'LaravelLang\\Lang\\Plugins\\Spark\\AureliusMollie\\V2' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Spark/AureliusMollie/V2.php',
+        'LaravelLang\\Lang\\Plugins\\Spark\\Aurelius\\Master' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Spark/Aurelius/Master.php',
+        'LaravelLang\\Lang\\Plugins\\Spark\\Aurelius\\V11' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Spark/Aurelius/V11.php',
+        'LaravelLang\\Lang\\Plugins\\Spark\\Aurelius\\V12' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Spark/Aurelius/V12.php',
+        'LaravelLang\\Lang\\Plugins\\Spark\\Paddle' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Spark/Paddle.php',
+        'LaravelLang\\Lang\\Plugins\\Spark\\Stripe' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/Spark/Stripe.php',
+        'LaravelLang\\Lang\\Plugins\\UI\\Master' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/UI/Master.php',
+        'LaravelLang\\Lang\\Plugins\\UI\\V3' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/UI/V3.php',
+        'LaravelLang\\Lang\\Plugins\\UI\\V4' => __DIR__ . '/..' . '/laravel-lang/lang/src/Plugins/UI/V4.php',
+        'LaravelLang\\Lang\\ServiceProvider' => __DIR__ . '/..' . '/laravel-lang/lang/src/ServiceProvider.php',
         'Laravel\\Fortify\\Actions\\AttemptToAuthenticate' => __DIR__ . '/..' . '/laravel/fortify/src/Actions/AttemptToAuthenticate.php',
         'Laravel\\Fortify\\Actions\\CanonicalizeUsername' => __DIR__ . '/..' . '/laravel/fortify/src/Actions/CanonicalizeUsername.php',
         'Laravel\\Fortify\\Actions\\CompletePasswordReset' => __DIR__ . '/..' . '/laravel/fortify/src/Actions/CompletePasswordReset.php',
@@ -3968,6 +4038,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'Livewire\\WithPagination' => __DIR__ . '/..' . '/livewire/livewire/src/WithPagination.php',
         'Livewire\\WithoutUrlPagination' => __DIR__ . '/..' . '/livewire/livewire/src/WithoutUrlPagination.php',
         'Livewire\\Wrapped' => __DIR__ . '/..' . '/livewire/livewire/src/Wrapped.php',
+        'MallardDuck\\LucideIcons\\BladeLucideIconsServiceProvider' => __DIR__ . '/..' . '/mallardduck/blade-lucide-icons/src/BladeLucideIconsServiceProvider.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegration' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegration.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegrationAssertPostConditions' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegrationAssertPostConditions.php',
         'Mockery\\Adapter\\Phpunit\\MockeryTestCase' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryTestCase.php',

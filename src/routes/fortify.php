@@ -9,7 +9,7 @@ use Laravel\Fortify\Http\Controllers\EmailVerificationNotificationController;
 use Laravel\Fortify\Http\Controllers\EmailVerificationPromptController;
 use Laravel\Fortify\Http\Controllers\NewPasswordController;
 use Laravel\Fortify\Http\Controllers\PasswordController;
-use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
+use App\Http\Controllers\Auth\CustomPasswordResetLinkController;
 use Laravel\Fortify\Http\Controllers\ProfileInformationController;
 use Laravel\Fortify\Http\Controllers\RecoveryCodeController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
@@ -48,12 +48,12 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     // Password Reset...
     if (Features::enabled(Features::resetPasswords())) {
         if ($enableViews) {
-            Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
+            Route::get('/forgot-password', [CustomPasswordResetLinkController::class, 'create'])
                 ->middleware(['guest:' . config('fortify.guard')])
                 ->name('password.request');
         }
 
-        Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+        Route::post('/forgot-password', [CustomPasswordResetLinkController::class, 'store'])
             ->middleware([
                 'guest:' . config('fortify.guard'),
                 'throttle:password-email',

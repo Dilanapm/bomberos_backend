@@ -14,11 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             '2fa.required' => \App\Http\Middleware\EnsureTwoFactorEnabledForPrivilegedRoles::class,
             'admin.passkey.required' => \App\Http\Middleware\EnsureAdminHasPasskey::class,
+            'admin.only' => \App\Http\Middleware\OnlyAdminCanUseWeb::class, // Middleware para bloquear no-admins
             // Spatie Permission Middleware aliases
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
+        // No aplicar globalmente, sino por ruta
         $middleware->web(append: [
         \App\Http\Middleware\LogPasswordResetRequest::class,
     ]);

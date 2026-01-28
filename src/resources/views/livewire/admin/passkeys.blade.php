@@ -7,6 +7,18 @@
         Registrar nueva Passkey
     </button>
 
+    @php
+        $hasDisabled = isset($credentials) && $credentials->whereNotNull('disabled_at')->count() > 0;
+    @endphp
+
+    @if ($hasDisabled)
+        <button type="button" wire:click="deleteDisabled"
+                onclick="return confirm('¿Eliminar permanentemente las passkeys revocadas? Esto es necesario para registrar una nueva desde el mismo dispositivo.')"
+                style="margin-left:10px; background-color:#dc3545; color:white;">
+            Eliminar passkeys revocadas
+        </button>
+    @endif
+
     <p id="passkey-status"></p>
 
     @if (session('status'))
@@ -75,12 +87,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@laragear/webpass@2/dist/webpass.js" defer></script>
     <script>
+        const hasDisabledPasskeys = {{ $hasDisabled ? 'true' : 'false' }};
+
         document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('btn-register-passkey');
             const status = document.getElementById('passkey-status');
 
             btn?.addEventListener('click', async () => {
                 status.textContent = '';
+
+                // Verificar si hay passkeys revocadas
+                if (hasDisabledPasskeys) {
+                    alert('Primero debes eliminar las passkeys revocadas antes de registrar una nueva. Usa el botón "Eliminar passkeys revocadas".');
+                    return;
+                }
 
                 if (typeof Webpass === 'undefined' || Webpass.isUnsupported()) {
                     alert("Tu navegador/dispositivo no soporta Passkeys/WebAuthn.");

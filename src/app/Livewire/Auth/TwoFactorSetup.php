@@ -12,7 +12,21 @@ class TwoFactorSetup extends Component
 {
     public string $code = '';
     public bool $showRecoveryCodes = false;
+    public bool $confirmedSavedRecovery = false;
+    public function markRecoverySaved(): void
+    {
+        $this->confirmedSavedRecovery = true;
+    }
+    public function finish(): void
+    {
+        if (! $this->confirmedSavedRecovery) {
+            $this->dispatch('toast', message: 'Marca que guardaste los recovery codes antes de continuar.');
+            return;
+        }
 
+        $this->redirect($this->nextUrlAfter2fa(), navigate: true);
+
+    }
     public function getUserProperty()
     {
         return Auth::user();
@@ -28,9 +42,50 @@ class TwoFactorSetup extends Component
         return ! empty($this->user?->two_factor_confirmed_at);
     }
 
+    private function adminHasActivePasskey(): bool
+    {
+        $user = $this->user;
+
+        if (! $user) return false;
+
+        // Laragear: relation webAuthnCredentials() existe si ya integraste el paquete
+        if (! method_exists($user, 'webAuthnCredentials')) {
+            return false;
+        }
+
+        return $user->webAuthnCredentials()
+            ->whereNull('disabled_at')
+            ->exists();
+    }
+
+    private function nextUrlAfter2fa(): string
+    {
+        $user = $this->user;
+
+        if (! $user) {
+            return '/login';
+        }
+
+        // Si por política solo admin usa web, corta aquí:
+        if (! $user->hasRole('admin')) {
+            // Puedes mandarlo a /dashboard, o a una vista de "no permitido"
+            return '/login';
+        }
+
+        // Admin: si no tiene passkeys -> UI, si tiene -> zona
+        return $this->adminHasActivePasskey()
+            ? route('admin.zone')
+            : route('admin.passkeys.ui');
+    }
+
     public function enable(): void
     {
         $user = $this->user;
+        if (! $user) 
+        {
+            $this->redirect('/login', navigate: true);
+            return;
+        }
         app(EnableTwoFactorAuthentication::class)($user);
 
         $this->dispatch('toast', message: '2FA habilitado. Escanea el QR y confirma el código.');
@@ -39,17 +94,23 @@ class TwoFactorSetup extends Component
     public function confirm(): void
     {
         $this->validate([
-            'code' => ['required', 'string', 'min:6', 'max:10'],
+            'code' => ['required', 'regex:/^\d{6,10}$/'],
         ]);
 
         $user = $this->user;
+        if (! $user) {
+        $this->redirect('/login', navigate: true);
+        return;
+        }
         app(ConfirmTwoFactorAuthentication::class)($user, $this->code);
 
         $this->code = '';
         $this->showRecoveryCodes = true;
-
-        $this->dispatch('toast', message: '2FA confirmado. Ya puedes acceder al panel.');
+        $this->confirmedSavedRecovery = false;
+        // Importante: aquí NO redirigimos.
+        $this->dispatch('toast', message: '2FA confirmado. Ahora guarda tus recovery codes.');
     }
+
 
     public function showRecovery(): void
     {
@@ -59,9 +120,14 @@ class TwoFactorSetup extends Component
     public function regenerateRecoveryCodes(): void
     {
         $user = $this->user;
+        if (! $user) {
+        $this->redirect('/login', navigate: true);
+        return;
+    }
         app(GenerateNewRecoveryCodes::class)($user);
 
         $this->showRecoveryCodes = true;
+        $this->confirmedSavedRecovery = false;
         $this->dispatch('toast', message: 'Recovery codes regenerados.');
     }
 

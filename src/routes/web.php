@@ -66,5 +66,9 @@ Route::get('/2fa-setup', TwoFactorSetup::class)
 | General
 |--------------------------------------------------------------------------
 */
-Route::get('/dashboard', fn () => 'Dashboard')->middleware(['web', 'auth'])->name('dashboard');
+Route::middleware(['web', 'auth', 'admin.only'])
+    ->group(function () {
+        Route::get('/dashboard', fn () => 'Dashboard')->name('dashboard');
+    });
+
 Route::get('/home', fn () => redirect('/dashboard'))->middleware(['web'])->name('home');

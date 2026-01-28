@@ -54,7 +54,26 @@ public function revoke(string $credentialId): void
     $credential->disabled_at = now();
     $credential->save();
 
-    session()->flash('status', 'Passkey revocada.');
+    session()->flash('status', 'Passkey revocada. Si necesitas registrar una nueva, elimina las revocadas.');
+    $this->syncAliases();
+}
+
+/**
+ * Elimina permanentemente las passkeys deshabilitadas.
+ * Esto es necesario cuando el navegador bloquea el registro de nuevas credenciales
+ * porque detecta que ya existe una (aunque esté revocada en BD).
+ * 
+ * NOTA: Solo elimina las YA deshabilitadas (mantiene auditoría temporal).
+ */
+public function deleteDisabled(): void
+{
+    $user = Auth::user();
+    
+    $count = $user->webAuthnCredentials()
+        ->whereNotNull('disabled_at')
+        ->forceDelete();
+
+    session()->flash('status', "Se eliminaron {$count} passkey(s) deshabilitada(s). Ahora puedes registrar una nueva.");
     $this->syncAliases();
 }
 

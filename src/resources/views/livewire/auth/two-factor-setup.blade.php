@@ -47,6 +47,10 @@
                 <div class="rounded-2xl border p-4">
                     <div class="flex items-center justify-between">
                         <h2 class="font-medium">Recovery codes</h2>
+                        <x-help-bubble title="¿Qué son los recovery codes?">
+                            Son códigos de respaldo para entrar si pierdes tu celular o Google Authenticator.
+                            Guárdalos en un lugar seguro. Si alguien los ve, podría entrar a tu cuenta.
+                        </x-help-bubble>
                         <div class="flex gap-2">
                             <button wire:click="showRecovery"
                                 class="rounded-xl px-3 py-2 border text-sm">Mostrar</button>
@@ -71,11 +75,48 @@
                 </div>
             </div>
         @endif
+        @if ($showRecoveryCodes)
+            <div class="space-y-4 border-t pt-6">
+                <h2 class="text-lg font-semibold text-red-600">
+                    Recovery Codes ¡guárdalos!
+                </h2>
+
+                <p class="text-sm text-gray-600">
+                    Estos códigos te permitirán acceder si pierdes tu autenticador.
+                    <strong>Guárdalos en un lugar seguro.</strong>
+                </p>
+
+                {{-- Lista de recovery codes --}}
+                <div class="grid grid-cols-2 gap-2 text-sm font-mono bg-gray-100 p-4 rounded">
+                    @foreach ($recoveryCodes as $code)
+                        <div>{{ $code }}</div>
+                    @endforeach
+                </div>
+
+                {{-- ✅ CHECKBOX AQUÍ --}}
+                <label class="flex items-center gap-2 text-sm text-gray-700">
+                    <input type="checkbox" wire:model="confirmedSavedRecovery" class="rounded border-gray-300">
+                    Ya guardé mis recovery codes
+                </label>
+
+                {{-- ▶️ BOTÓN CONTINUAR --}}
+                <button type="button" wire:click="finish"
+                    class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+                    Continuar
+                </button>
+            </div>
+        @endif
     </div>
 
     <script>
-        document.addEventListener('livewire:initialized', () => {
-            Livewire.on('toast', (e) => alert(e.message));
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('2fa-enabled', ({
+                nextUrl
+            }) => {
+                alert('✅ 2FA activado...');
+                window.location.href = nextUrl;
+            });
         });
     </script>
+
 </div>
