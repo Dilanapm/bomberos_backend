@@ -35,6 +35,8 @@ class EnsureTwoFactorEnabledForPrivilegedRoles
         $allowed = [
             'user/two-factor-qr-code',
             'two-factor-challenge',
+            '2fa-setup',
+            'user/confirm-password',
             'logout',
         ];
 

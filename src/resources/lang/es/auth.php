@@ -12,9 +12,8 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
-    'failed' => 'Estas credenciales no coinciden con nuestros registros.',
-    'password' => 'La contraseña es incorrecta.',
+    'failed' => 'Credenciales incorrectas, verifica tu correo y contraseña',
+    'password' => 'Credenciales incorrectas, verifica tu correo y contraseña',
     'throttle' => 'Demasiados intentos de acceso. Por favor intente nuevamente en :seconds segundos.',
 
 ];

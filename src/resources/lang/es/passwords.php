@@ -14,9 +14,9 @@ return [
     */
 
     'reset' => 'Su contraseña ha sido restablecida.',
-    'sent' => 'Si el correo electrónico existe en nuestro sistema, recibirá un enlace de recuperación en breve.',
+    'sent' => 'Si el correo electrónico existe, recibirá un enlace de recuperación en breve.',
     'throttled' => 'Por favor espere antes de intentar de nuevo.',
     'token' => 'El token de restablecimiento de contraseña es inválido.',
-    'user' => 'Si el correo electrónico existe en nuestro sistema, recibirá un enlace de recuperación en breve.',
+    'user' => 'Si el correo electrónico existe, recibirá un enlace de recuperación en breve.',
 
 ];

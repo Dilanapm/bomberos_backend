@@ -20,7 +20,7 @@ class TwoFactorSetup extends Component
     public function finish(): void
     {
         if (! $this->confirmedSavedRecovery) {
-            $this->dispatch('toast', message: 'Marca que guardaste los recovery codes antes de continuar.');
+            $this->dispatch('notify', type: 'warning', message: 'Marca que guardaste los recovery codes antes de continuar.');
             return;
         }
 
@@ -88,7 +88,7 @@ class TwoFactorSetup extends Component
         }
         app(EnableTwoFactorAuthentication::class)($user);
 
-        $this->dispatch('toast', message: '2FA habilitado. Escanea el QR y confirma el código.');
+        $this->dispatch('notify', type: 'success', message: '2FA habilitado. Escanea el QR y confirma el código.');
     }
 
     public function confirm(): void
@@ -108,7 +108,7 @@ class TwoFactorSetup extends Component
         $this->showRecoveryCodes = true;
         $this->confirmedSavedRecovery = false;
         // Importante: aquí NO redirigimos.
-        $this->dispatch('toast', message: '2FA confirmado. Ahora guarda tus recovery codes.');
+        $this->dispatch('notify', type: 'success', message: '2FA confirmado. Ahora guarda tus recovery codes.');
     }
 
 
@@ -128,7 +128,29 @@ class TwoFactorSetup extends Component
 
         $this->showRecoveryCodes = true;
         $this->confirmedSavedRecovery = false;
-        $this->dispatch('toast', message: 'Recovery codes regenerados.');
+        $this->dispatch('notify', type: 'success', message: 'Recovery codes regenerados.');
+    }
+
+    public function disable(): void
+    {
+        $user = $this->user;
+        if (! $user) {
+            $this->redirect('/login', navigate: true);
+            return;
+        }
+
+        // Desactivar 2FA
+        $user->forceFill([
+            'two_factor_secret' => null,
+            'two_factor_recovery_codes' => null,
+            'two_factor_confirmed_at' => null,
+        ])->save();
+
+        $this->showRecoveryCodes = false;
+        $this->code = '';
+        
+        // Mensaje para que el usuario sepa que debe reactivarlo
+        $this->dispatch('notify', type: 'warning', message: '2FA desactivado. Debes reactivarlo para continuar usando el sistema.');
     }
 
     public function render()
@@ -142,6 +164,9 @@ class TwoFactorSetup extends Component
 
         return view('livewire.auth.two-factor-setup', [
             'recoveryCodes' => $recoveryCodes,
-        ])->layout('layouts.app', ['title' => '2FA Setup']);
+        ])->layout('components.layouts.admin', [
+            'title' => 'Autenticación 2FA',
+            'subtitle' => 'Configura la verificación en dos pasos'
+        ]);
     }
 }

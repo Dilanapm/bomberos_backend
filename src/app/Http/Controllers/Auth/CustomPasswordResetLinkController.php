@@ -49,7 +49,7 @@ class CustomPasswordResetLinkController extends Controller
             $request->only(Fortify::email())
         );
 
-        // 🔒 SEGURIDAD CRÍTICA: Siempre devolver el mismo mensaje
+        // SEGURIDAD CRÍTICA: Siempre devolver el mismo mensaje
         // Independientemente de si el usuario existe o no.
         // Esto previene User Enumeration Attacks donde un atacante
         // podría descubrir qué emails están registrados.

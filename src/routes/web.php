@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Laragear\WebAuthn\Http\Routes as WebAuthnRoutes;
 use App\Livewire\Admin\Passkeys;
 use App\Livewire\Auth\TwoFactorSetup;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,8 +44,11 @@ Route::middleware(['web', 'auth', 'role:admin', '2fa.required', 'admin.passkey.r
     ->prefix('admin')
     ->group(function () {
 
-        // Zona admin (bloqueada si falta 2FA por tu middleware)
-        Route::get('/zone', fn () => 'Ok admin test')->name('admin.zone');
+        // Dashboard principal
+        Route::get('/zone', fn () => view('admin.zone'))->name('admin.zone');
+
+        // Gestión de usuarios
+        Route::resource('users', UserController::class)->names('admin.users');
 
         // UI para registrar/gestionar passkeys (requiere 2FA + confirmar password)
         Route::get('/passkeys-ui', Passkeys::class)

@@ -42,7 +42,7 @@ class Passkeys extends Component
         $credential->alias = $newAlias !== '' ? $newAlias : null;
         $credential->save();
 
-        session()->flash('status', 'Alias actualizado.');
+        $this->dispatch('notify', type: 'success', message: 'Alias actualizado exitosamente.');
     }
 
 public function revoke(string $credentialId): void
@@ -50,11 +50,21 @@ public function revoke(string $credentialId): void
     $user = Auth::user();
     $credential = $user->webAuthnCredentials()->whereKey($credentialId)->firstOrFail();
 
+    // Verificar si es la última passkey activa
+    $activeCount = $user->webAuthnCredentials()
+        ->whereNull('disabled_at')
+        ->count();
+
+    if ($activeCount <= 1) {
+        $this->dispatch('notify', type: 'warning', message: 'No puedes revocar tu única passkey activa. Debes mantener al menos una para acceder al sistema.');
+        return;
+    }
+
     // Revocar sin borrar (auditable)
     $credential->disabled_at = now();
     $credential->save();
 
-    session()->flash('status', 'Passkey revocada. Si necesitas registrar una nueva, elimina las revocadas.');
+    $this->dispatch('notify', type: 'success', message: 'Passkey revocada exitosamente.');
     $this->syncAliases();
 }
 
@@ -73,7 +83,7 @@ public function deleteDisabled(): void
         ->whereNotNull('disabled_at')
         ->forceDelete();
 
-    session()->flash('status', "Se eliminaron {$count} passkey(s) deshabilitada(s). Ahora puedes registrar una nueva.");
+    $this->dispatch('notify', type: 'success', message: "Se eliminaron {$count} passkey(s) deshabilitada(s). Ahora puedes registrar una nueva.");
     $this->syncAliases();
 }
 
@@ -87,6 +97,9 @@ public function deleteDisabled(): void
             ->get();
 
         return view('livewire.admin.passkeys', compact('credentials'))
-            ->layout('layouts.app', ['title' => 'Passkeys (Admin)']);
+            ->layout('components.layouts.admin', [
+                'title' => 'Mis Passkeys',
+                'subtitle' => 'Administra tus claves de acceso biométricas'
+            ]);
     }
 }

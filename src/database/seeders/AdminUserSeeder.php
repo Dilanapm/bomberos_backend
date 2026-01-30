@@ -19,7 +19,5 @@ class AdminUserSeeder extends Seeder
         );
 
         $admin->syncRoles(['admin']); // esta linea asegura que el usuario tenga el rol de admin
-        
-
     }
 }
