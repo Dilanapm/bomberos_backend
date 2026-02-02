@@ -47,7 +47,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="fixed inset-0 bg-secondary-900 bg-opacity-75 transition-opacity"
+    class="fixed inset-0 bg-secondary-900 bg-opacity-75 dark:bg-opacity-80 transition-opacity"
     @click="cancel()"
   ></div>
 
@@ -61,12 +61,12 @@
       x-transition:leave="transition ease-in duration-200"
       x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
       x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6"
+      class="relative bg-white dark:bg-dark-0 rounded-2xl shadow-2xl max-w-md w-full p-6"
       @click.stop
     >
       <!-- Icon -->
       <div class="flex items-center justify-center mb-4">
-        <div :class="iconBg" class="w-16 h-16 rounded-full flex items-center justify-center">
+        <div :class="iconBg" class="w-16 h-16 rounded-full flex items-center justify-center dark:bg-secondary-400">
           <template x-if="icon === 'alert-triangle'">
             <x-lucide-alert-triangle :class="iconColor" class="w-8 h-8" />
           </template>
@@ -82,25 +82,28 @@
           <template x-if="icon === 'alert-circle'">
             <x-lucide-alert-circle :class="iconColor" class="w-8 h-8" />
           </template>
+          <template x-if="icon === 'log-out'">
+            <x-lucide-log-out :class="iconColor" class="w-8 h-8" />
+          </template>
         </div>
       </div>
 
       <!-- Title -->
-      <h3 class="text-xl font-bold text-secondary-900 text-center mb-2" x-text="title"></h3>
+      <h3 class="text-xl font-bold text-secondary-900 dark:text-secondary-100 text-center mb-2" x-text="title"></h3>
 
       <!-- Message -->
-      <p class="text-sm text-secondary-600 text-center mb-6 whitespace-pre-line" x-text="message"></p>
+      <p class="text-sm text-secondary-600 dark:text-secondary-400 text-center mb-6 whitespace-pre-line" x-text="message"></p>
 
       <!-- Actions -->
       <div class="flex gap-3">
         <button
           @click="cancel()"
-          class="flex-1 px-4 py-2.5 bg-secondary-100 hover:bg-secondary-200 text-secondary-700 rounded-lg font-semibold transition-colors"
+          class="flex-1 px-4 py-2.5 bg-secondary-100 hover:bg-secondary-200 dark:bg-dark-2 dark:hover:bg-dark-3 text-secondary-700 dark:text-secondary-300 rounded-lg font-semibold transition-colors"
           x-text="cancelText"
         ></button>
         <button
           @click="confirm()"
-          class="flex-1 px-4 py-2.5 bg-primary-5 hover:bg-primary-6 text-white rounded-lg font-semibold transition-colors"
+          class="flex-1 px-4 py-2.5 bg-primary-5 hover:bg-primary-6 dark:bg-dark-7 dark:hover:bg-dark-8 text-white rounded-lg font-semibold transition-colors"
           x-text="confirmText"
         ></button>
       </div>

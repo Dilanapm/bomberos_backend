@@ -14,9 +14,19 @@
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   @livewireStyles
   
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.store('sidebar', {
+        open: false,
+        toggle() { this.open = !this.open },
+        close() { this.open = false }
+      })
+    })
+  </script>
 </head>
-<body class="bg-secondary-50 font-sans antialiased">
-  <div class="flex h-screen overflow-hidden">
+<body class="bg-secondary-50 dark:bg-dark-1 font-sans antialiased transition-colors">
+  <div class="flex h-screen overflow-hidden">    <!-- Mobile sidebar overlay -->   <div \n      x-data\n      x-show="$store.sidebar.open" \n      @click="$store.sidebar.close()"\n      x-transition:enter="transition-opacity ease-linear duration-200"    x-transition:enter-start="opacity-0"      x-transition:enter-end="opacity-100"     x-transition:leave="transition-opacity ease-linear duration-200"     x-transition:leave-start="opacity-100"\n      x-transition:leave-end="opacity-0"\n      class="fixed inset-0 bg-secondary-900 bg-opacity-50 z-40 lg:hidden"\n      style="display: none;"\n    ></div>
+
     <!-- Sidebar -->
     <x-admin.sidebar />
 

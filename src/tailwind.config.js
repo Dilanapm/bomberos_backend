@@ -2,6 +2,7 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class', // Habilitar dark mode con clase 'dark'
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -82,22 +83,49 @@ export default {
                 800: "#0F172A", // Fondo dark mode → texto claro
                 900: "#020617", // Fondo dark absoluto → texto claro
             },
+            // informacion neutra
+            info:{
+                300: "#93C5FD",
+                400: "#60A5FA",
+                500: "#2F7FE9",
+                600: "#1C64F2",
+                700: "#1A56DB",
+            },
 
 
             // Accent (warning / atención no crítica)
             accent: {
+                200: "#FEF3C7",
+                300: "#FBBF24",
                 400: "#F59E0B",
                 500: "#D97706",
             },
 
             // Success (verde para acciones positivas - login, guardar, etc)
             success: {
+                200: "#D1FAE5", // Verde muy claro → texto oscuro
+                400: "#34D399", // Verde claro → texto oscuro
                 500: "#10B981", // Verde medio → texto blanco
                 600: "#059669", // Verde oscuro → texto blanco (hover)
             },
 
             // Asegurar que white está disponible
             white: "#FFFFFF",
+            
+            // Dark Mode - Bomberos Dark Theme
+            dark: {
+                0: "#0A0707",   // Casi negro (fondo principal dark)
+                1: "#211413",   // Marrón muy oscuro
+                2: "#381C1A",   // Marrón oscuro
+                3: "#4F201E",   // Marrón-rojo oscuro
+                4: "#66221E",   // Marrón-rojo
+                5: "#7C221E",   // Rojo oscuro
+                6: "#93231D",   // Rojo medio oscuro
+                7: "#AA241D",   // Rojo medio (igual al primary-5)
+                8: "#B51B13",   // Rojo brillante
+                9: "#C11209",   // Rojo muy brillante
+                10: "#CC0A00",  // Rojo intenso (acento máximo)
+            },
         },
     },
     plugins: [],

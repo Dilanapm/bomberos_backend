@@ -1,4 +1,4 @@
-@props(['duration' => 5000])
+@props(['duration' => 8000])
 
 <div 
   x-data="{ 
@@ -51,77 +51,54 @@
       x-transition:leave-start="opacity-100 translate-x-0"
       x-transition:leave-end="opacity-0 translate-x-full"
       class="relative flex items-start gap-3 p-4 rounded-xl shadow-lg border-2 max-w-md min-w-80"
+      :class="{
+        'bg-success-200 dark:bg-dark-1 border-success-400 dark:border-success-400': notification.type === 'success',
+        'bg-primary-50 dark:bg-dark-1 border-primary-200 dark:border-primary-600': notification.type === 'error',
+        'bg-accent-200 dark:dark:bg-dark-1 border-accent-400 dark:border-amber-600': notification.type === 'warning',
+        'bg-info-300 dark:bg-dark-1 border-info-500 dark:border-info-500': notification.type === 'info'
+      }"
     >
-      <!-- Success Style -->
-      <template x-if="notification.type === 'success'">
-        <div class="absolute inset-0 bg-success-50 border-success-200 rounded-xl -z-10"></div>
-      </template>
-      
-      <!-- Error Style -->
-      <template x-if="notification.type === 'error'">
-        <div class="absolute inset-0 bg-primary-50 border-primary-200 rounded-xl -z-10"></div>
-      </template>
-      
-      <!-- Warning Style -->
-      <template x-if="notification.type === 'warning'">
-        <div class="absolute inset-0 bg-amber-50 border-amber-200 rounded-xl -z-10"></div>
-      </template>
-      
-      <!-- Info Style -->
-      <template x-if="notification.type === 'info'">
-        <div class="absolute inset-0 bg-blue-50 border-blue-200 rounded-xl -z-10"></div>
-      </template>
 
       <!-- Icon -->
       <div class="flex-shrink-0 z-10">
         <template x-if="notification.type === 'success'">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-success-600" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
+          <div class="text-success-600 dark:text-success-400">
+            <x-lucide-check-circle class="w-6 h-6" />
+          </div>
         </template>
         <template x-if="notification.type === 'error'">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary-600" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-          </svg>
+          <div class="text-dark-10 dark:text-dark-9">
+            <x-lucide-x-circle class="w-6 h-6" />
+          </div>
         </template>
         <template x-if="notification.type === 'warning'">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-amber-600" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-            <line x1="12" y1="9" x2="12" y2="13"></line>
-            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-          </svg>
+          <div class="text-accent-500 dark:text-accent-400">
+            <x-lucide-alert-triangle class="w-6 h-6" />
+          </div>
         </template>
         <template x-if="notification.type === 'info'">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-600" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-          </svg>
+          <div class="text-info-500 dark:text-info-400">
+            <x-lucide-info class="w-6 h-6" />
+          </div>
         </template>
       </div>
 
       <!-- Message -->
-      <p class="flex-1 text-sm font-medium pt-0.5 z-10" 
+      <p class="flex-1 text-sm font-bold pt-0.5 z-10" 
          :class="{
-           'text-success-800': notification.type === 'success',
-           'text-primary-800': notification.type === 'error',
-           'text-amber-800': notification.type === 'warning',
-           'text-blue-800': notification.type === 'info'
+           'text-success-600 dark:text-success-400': notification.type === 'success',
+           'text-dark-10 dark:text-dark-10': notification.type === 'error',
+           'text-accent-500 dark:text-accent-500': notification.type === 'warning',
+           'text-blue-800 dark:text-blue-200': notification.type === 'info'
          }"
          x-text="notification.message"></p>
 
       <!-- Close Button -->
       <button 
         @click="remove(notification.id)"
-        class="flex-shrink-0 hover:opacity-70 transition-opacity z-10"
+        class="flex-shrink-0 text-secondary-400 dark:text-secondary-400 hover:text-secondary-600 dark:hover:text-secondary-300 transition-colors z-10"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
+        <x-lucide-x class="w-5 h-5" />
       </button>
     </div>
   </template>

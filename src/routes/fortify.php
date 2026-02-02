@@ -128,7 +128,7 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     // Password Confirmation...
     if ($enableViews) {
         Route::get('/user/confirm-password', [ConfirmablePasswordController::class, 'show'])
-            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
+            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard'), 'prevent.back'])
             ->name('password.confirm');
     }
 

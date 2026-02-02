@@ -1,7 +1,7 @@
 <div class="max-w-3xl space-y-6">
     <!-- Back Button -->
     <div>
-        <a href="{{ route('admin.zone') }}" class="inline-flex items-center gap-2 text-secondary-600 hover:text-secondary-900 transition-colors font-medium">
+        <a href="{{ route('admin.zone') }}" class="inline-flex items-center gap-2 text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 transition-colors font-medium">
             <x-lucide-arrow-left class="w-5 h-5" />
             Volver al dashboard
         </a>
@@ -12,32 +12,32 @@
     @enderror
 
     <!-- Estado Actual -->
-    <div class="bg-white rounded-xl shadow-md border border-secondary-200 p-6">
+    <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2 p-6">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
                 @if ($this->isConfirmed)
-                    <div class="flex items-center justify-center w-12 h-12 bg-success-100 rounded-lg">
-                        <x-lucide-shield-check class="w-6 h-6 text-success-600" />
+                    <div class="flex items-center justify-center w-12 h-12 bg-success-100 dark:bg-dark-2 rounded-lg">
+                        <x-lucide-shield-check class="w-6 h-6 text-success-600 dark:text-success-400" />
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-secondary-800">2FA Activado</h3>
-                        <p class="text-sm text-secondary-500">Tu cuenta está protegida con autenticación de dos factores</p>
+                        <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100">2FA Activado</h3>
+                        <p class="text-sm text-secondary-500 dark:text-secondary-400">Tu cuenta está protegida con autenticación de dos factores</p>
                     </div>
                 @elseif ($this->isEnabled)
-                    <div class="flex items-center justify-center w-12 h-12 bg-amber-100 rounded-lg">
-                        <x-lucide-alert-circle class="w-6 h-6 text-amber-600" />
+                    <div class="flex items-center justify-center w-12 h-12 bg-amber-100 dark:bg-dark-2 rounded-lg">
+                        <x-lucide-alert-circle class="w-6 h-6 text-amber-600 dark:text-amber-400" />
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-secondary-800">2FA Pendiente de Confirmar</h3>
-                        <p class="text-sm text-secondary-500">Escanea el QR y confirma el código para completar la activación</p>
+                        <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100">2FA Pendiente de Confirmar</h3>
+                        <p class="text-sm text-secondary-500 dark:text-secondary-400">Escanea el QR y confirma el código para completar la activación</p>
                     </div>
                 @else
-                    <div class="flex items-center justify-center w-12 h-12 bg-primary-1 rounded-lg">
-                        <x-lucide-shield-off class="w-6 h-6 text-primary-6" />
+                    <div class="flex items-center justify-center w-12 h-12 bg-primary-1 dark:bg-dark-2 rounded-lg">
+                        <x-lucide-shield-off class="w-6 h-6 text-primary-6 dark:text-dark-7" />
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-secondary-800">2FA Desactivado</h3>
-                        <p class="text-sm text-secondary-500">
+                        <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100">2FA Desactivado</h3>
+                        <p class="text-sm text-secondary-500 dark:text-secondary-400">
                             <x-lucide-alert-triangle class="w-4 h-4 inline" />
                             Debes activar 2FA para continuar usando el sistema
                         </p>
@@ -72,7 +72,7 @@
     @enderror
 
     @if (!$this->isEnabled)
-            <div class="bg-white rounded-xl shadow-md border border-secondary-200 p-6">
+            <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2 p-6">
                 <button wire:click="enable" class="px-6 py-3 bg-primary-5 hover:bg-primary-6 text-white rounded-lg font-semibold transition-colors flex items-center gap-2">
                     <x-lucide-shield-check class="w-5 h-5" />
                     Habilitar 2FA
@@ -82,29 +82,29 @@
             <div class="space-y-6">
                 @if (!$this->isConfirmed)
                     <!-- QR Code -->
-                    <div class="bg-white rounded-xl shadow-md border border-secondary-200 p-6">
-                        <h3 class="text-lg font-bold text-secondary-800 mb-4 flex items-center gap-2">
-                            <x-lucide-qr-code class="w-5 h-5 text-primary-5" />
+                    <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2 p-6">
+                        <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100 mb-4 flex items-center gap-2">
+                            <x-lucide-qr-code class="w-5 h-5 text-primary-5 dark:text-dark-7" />
                             1. Escanea el código QR
                         </h3>
-                        <p class="text-sm text-secondary-600 mb-4">
+                        <p class="text-sm text-secondary-600 dark:text-secondary-300 mb-4">
                             Usa Google Authenticator, Authy o cualquier app compatible con TOTP
                         </p>
-                        <div class="flex justify-center p-4 bg-secondary-50 rounded-lg">
+                        <div class="flex justify-center p-4 bg-secondary-50 dark:bg-dark-1 rounded-lg">
                             {!! $this->user->twoFactorQrCodeSvg() !!}
                         </div>
                     </div>
 
                     <!-- Confirm Code -->
-                    <div class="bg-white rounded-xl shadow-md border border-secondary-200 p-6">
-                        <h3 class="text-lg font-bold text-secondary-800 mb-4 flex items-center gap-2">
-                            <x-lucide-key class="w-5 h-5 text-primary-5" />
+                    <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2 p-6">
+                        <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100 mb-4 flex items-center gap-2">
+                            <x-lucide-key class="w-5 h-5 text-primary-5 dark:text-dark-7" />
                             2. Confirma el código
                         </h3>
                         <div class="flex gap-3">
                             <div class="flex-1">
-                                <label class="block text-sm font-semibold text-secondary-700 mb-2">Código de 6 dígitos</label>
-                                <input wire:model.defer="code" class="block w-full px-4 py-2.5 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5" placeholder="123456" maxlength="6">
+                                <label class="block text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2">Código de 6 dígitos</label>
+                                <input wire:model.defer="code" class="block w-full px-4 py-2.5 border border-secondary-300 dark:border-dark-3 dark:bg-dark-1 dark:text-secondary-100 rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5" placeholder="123456" maxlength="6">
                             </div>
                             <div class="flex items-end">
                                 <button wire:click="confirm" class="px-6 py-2.5 bg-success-500 hover:bg-success-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2">
@@ -117,14 +117,14 @@
                 @endif
 
                 <!-- Recovery Codes -->
-                <div class="bg-white rounded-xl shadow-md border border-secondary-200 p-6">
+                <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2 p-6">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h3 class="text-lg font-bold text-secondary-800 flex items-center gap-2">
-                                <x-lucide-life-buoy class="w-5 h-5 text-primary-5" />
+                            <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100 flex items-center gap-2">
+                                <x-lucide-life-buoy class="w-5 h-5 text-primary-5 dark:text-dark-7" />
                                 Códigos de Recuperación
                             </h3>
-                            <p class="text-sm text-secondary-600 mt-1">
+                            <p class="text-sm text-secondary-600 dark:text-secondary-300 mt-1">
                                 Usa estos códigos si pierdes acceso a tu autenticador
                             </p>
                         </div>
@@ -169,9 +169,9 @@
                                 </div>
                             @endif
 
-                            <div class="grid grid-cols-2 gap-3 p-4 bg-secondary-50 rounded-lg border border-secondary-200">
+                            <div class="grid grid-cols-2 gap-3 p-4 bg-secondary-50 dark:bg-dark-1 rounded-lg border border-secondary-200 dark:border-dark-2">
                                 @foreach ($recoveryCodes as $rc)
-                                    <div class="px-3 py-2 bg-white border border-secondary-300 rounded font-mono text-sm text-center">
+                                    <div class="px-3 py-2 bg-white dark:bg-dark-0 border border-secondary-300 dark:border-dark-3 rounded font-mono text-sm text-center dark:text-secondary-200">
                                         {{ $rc }}
                                     </div>
                                 @endforeach

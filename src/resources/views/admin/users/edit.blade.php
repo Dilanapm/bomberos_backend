@@ -7,7 +7,7 @@
     <div class="mb-6">
       <a
         href="{{ route('admin.users.index') }}"
-        class="inline-flex items-center gap-2 text-secondary-600 hover:text-secondary-900 transition-colors font-medium"
+        class="inline-flex items-center gap-2 text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 transition-colors font-medium"
       >
         <x-lucide-arrow-left class="w-5 h-5" />
         Volver a usuarios
@@ -15,19 +15,19 @@
     </div>
 
     <!-- Form Card -->
-    <div class="bg-white rounded-xl shadow-md border border-secondary-200 p-8">
+    <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2 p-8">
       <form method="POST" action="{{ route('admin.users.update', $user) }}" class="space-y-6">
         @csrf
         @method('PUT')
 
         <!-- Name Field -->
         <div>
-          <label for="name" class="block text-sm font-semibold text-secondary-700 mb-2">
+          <label for="name" class="block text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2">
             Nombre Completo
           </label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <x-lucide-user class="w-5 h-5 text-secondary-400" />
+              <x-lucide-user class="w-5 h-5 text-secondary-400 dark:text-secondary-500" />
             </div>
             <input
               id="name"
@@ -36,7 +36,7 @@
               value="{{ old('name', $user->name) }}"
               required
               autofocus
-              class="block w-full pl-10 pr-3 py-2.5 border @error('name') border-primary-5 @else border-secondary-300 @enderror rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5"
+              class="block w-full pl-10 pr-3 py-2.5 border @error('name') border-primary-5 @else border-secondary-300 dark:border-dark-3 @enderror dark:bg-dark-1 dark:text-secondary-100 rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5"
             />
           </div>
           @error('name')
@@ -49,12 +49,12 @@
 
         <!-- Email Field -->
         <div>
-          <label for="email" class="block text-sm font-semibold text-secondary-700 mb-2">
+          <label for="email" class="block text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2">
             Correo Electrónico
           </label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <x-lucide-mail class="w-5 h-5 text-secondary-400" />
+              <x-lucide-mail class="w-5 h-5 text-secondary-400 dark:text-secondary-500" />
             </div>
             <input
               id="email"
@@ -62,7 +62,7 @@
               name="email"
               value="{{ old('email', $user->email) }}"
               required
-              class="block w-full pl-10 pr-3 py-2.5 border @error('email') border-primary-5 @else border-secondary-300 @enderror rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5"
+              class="block w-full pl-10 pr-3 py-2.5 border @error('email') border-primary-5 @else border-secondary-300 dark:border-dark-3 @enderror dark:bg-dark-1 dark:text-secondary-100 rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5"
             />
           </div>
           @error('email')
@@ -75,18 +75,18 @@
 
         <!-- Role Field -->
         <div>
-          <label for="role" class="block text-sm font-semibold text-secondary-700 mb-2">
+          <label for="role" class="block text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2">
             Rol de Usuario
           </label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <x-lucide-shield class="w-5 h-5 text-secondary-400" />
+              <x-lucide-shield class="w-5 h-5 text-secondary-400 dark:text-secondary-500" />
             </div>
             <select
               id="role"
               name="role"
               required
-              class="block w-full pl-10 pr-3 py-2.5 border @error('role') border-primary-5 @else border-secondary-300 @enderror rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5 bg-white appearance-none"
+              class="block w-full pl-10 pr-3 py-2.5 border @error('role') border-primary-5 @else border-secondary-300 dark:border-dark-3 @enderror dark:bg-dark-1 dark:text-secondary-100 rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5 bg-white appearance-none"
             >
               @foreach ($roles as $role)
                 <option
@@ -98,7 +98,7 @@
               @endforeach
             </select>
             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <x-lucide-chevron-down class="w-5 h-5 text-secondary-400" />
+              <x-lucide-chevron-down class="w-5 h-5 text-secondary-400 dark:text-secondary-500" />
             </div>
           </div>
           @error('role')
@@ -110,30 +110,30 @@
         </div>
 
         <!-- Divider -->
-        <div class="border-t border-secondary-200 pt-6">
-          <h3 class="text-lg font-bold text-secondary-800 mb-4 flex items-center gap-2">
-            <x-lucide-key class="w-5 h-5 text-primary-5" />
+        <div class="border-t border-secondary-200 dark:border-dark-2 pt-6">
+          <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100 mb-4 flex items-center gap-2">
+            <x-lucide-key class="w-5 h-5 text-primary-5 dark:text-dark-7" />
             Cambiar Contraseña (Opcional)
           </h3>
-          <p class="text-sm text-secondary-600 mb-4">
+          <p class="text-sm text-secondary-600 dark:text-secondary-300 mb-4">
             Deja estos campos vacíos si no deseas cambiar la contraseña actual.
           </p>
 
           <!-- Password Field -->
           <div class="space-y-6">
             <div>
-              <label for="password" class="block text-sm font-semibold text-secondary-700 mb-2">
+              <label for="password" class="block text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2">
                 Nueva Contraseña
               </label>
               <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <x-lucide-lock class="w-5 h-5 text-secondary-400" />
+                  <x-lucide-lock class="w-5 h-5 text-secondary-400 dark:text-secondary-500" />
                 </div>
                 <input
                   id="password"
                   type="password"
                   name="password"
-                  class="block w-full pl-10 pr-3 py-2.5 border @error('password') border-primary-5 @else border-secondary-300 @enderror rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5"
+                  class="block w-full pl-10 pr-3 py-2.5 border @error('password') border-primary-5 @else border-secondary-300 dark:border-dark-3 @enderror dark:bg-dark-1 dark:text-secondary-100 rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5"
                   placeholder="Mínimo 8 caracteres"
                 />
               </div>
@@ -147,18 +147,18 @@
 
             <!-- Password Confirmation Field -->
             <div>
-              <label for="password_confirmation" class="block text-sm font-semibold text-secondary-700 mb-2">
+              <label for="password_confirmation" class="block text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2">
                 Confirmar Nueva Contraseña
               </label>
               <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <x-lucide-lock class="w-5 h-5 text-secondary-400" />
+                  <x-lucide-lock class="w-5 h-5 text-secondary-400 dark:text-secondary-500" />
                 </div>
                 <input
                   id="password_confirmation"
                   type="password"
                   name="password_confirmation"
-                  class="block w-full pl-10 pr-3 py-2.5 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5"
+                  class="block w-full pl-10 pr-3 py-2.5 border border-secondary-300 dark:border-dark-3 dark:bg-dark-1 dark:text-secondary-100 rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5"
                   placeholder="Repetir contraseña"
                 />
               </div>
@@ -167,11 +167,11 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="border-t border-secondary-200 pt-6">
+        <div class="border-t border-secondary-200 dark:border-dark-2 pt-6">
           <div class="flex items-center justify-end gap-3">
             <a
               href="{{ route('admin.users.index') }}"
-              class="px-6 py-2.5 border border-secondary-300 text-secondary-700 rounded-lg font-semibold hover:bg-secondary-50 transition-colors"
+              class="px-6 py-2.5 border border-secondary-300 dark:border-dark-3 text-secondary-700 dark:text-secondary-300 hover:bg-secondary-50 dark:hover:bg-dark-2 rounded-lg font-semibold transition-colors"
             >
               Cancelar
             </a>

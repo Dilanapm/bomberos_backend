@@ -128,7 +128,7 @@ class TwoFactorSetup extends Component
 
         $this->showRecoveryCodes = true;
         $this->confirmedSavedRecovery = false;
-        $this->dispatch('notify', type: 'success', message: 'Recovery codes regenerados.');
+        $this->dispatch('notify', type: 'success', message: 'Códigos de recuperación regenerados.');
     }
 
     public function disable(): void

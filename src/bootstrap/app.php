@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             '2fa.required' => \App\Http\Middleware\EnsureTwoFactorEnabledForPrivilegedRoles::class,
             'admin.passkey.required' => \App\Http\Middleware\EnsureAdminHasPasskey::class,
             'admin.only' => \App\Http\Middleware\OnlyAdminCanUseWeb::class, // Middleware para bloquear no-admins
+            'prevent.back' => \App\Http\Middleware\PreventBackHistory::class,
             // Spatie Permission Middleware aliases
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,

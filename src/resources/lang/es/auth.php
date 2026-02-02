@@ -16,4 +16,8 @@ return [
     'password' => 'Credenciales incorrectas, verifica tu correo y contraseña',
     'throttle' => 'Demasiados intentos de acceso. Por favor intente nuevamente en :seconds segundos.',
 
+    // Two Factor Authentication
+    'The provided two factor authentication code was invalid.' => 'El código de autenticación de dos factores proporcionado no es válido.',
+    'The provided two factor recovery code was invalid.' => 'El código de recuperación de dos factores proporcionado no es válido.',
+
 ];

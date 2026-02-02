@@ -40,7 +40,7 @@ Route::middleware(['web'])
 | Admin (Web)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['web', 'auth', 'role:admin', '2fa.required', 'admin.passkey.required'])
+Route::middleware(['web', 'auth', 'role:admin', '2fa.required', 'admin.passkey.required', 'prevent.back'])
     ->prefix('admin')
     ->group(function () {
 
@@ -62,17 +62,5 @@ Route::middleware(['web', 'auth', 'role:admin', '2fa.required', 'admin.passkey.r
 |--------------------------------------------------------------------------
 */
 Route::get('/2fa-setup', TwoFactorSetup::class)
-  ->middleware(['web','auth','password.confirm'])
+  ->middleware(['web','auth','password.confirm','prevent.back'])
   ->name('2fa.setup');
-
-/*
-|--------------------------------------------------------------------------
-| General
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['web', 'auth', 'admin.only'])
-    ->group(function () {
-        Route::get('/dashboard', fn () => 'Dashboard')->name('dashboard');
-    });
-
-Route::get('/home', fn () => redirect('/dashboard'))->middleware(['web'])->name('home');
