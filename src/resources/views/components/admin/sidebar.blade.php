@@ -6,8 +6,9 @@
   <!-- Logo / Brand -->
   <div class="p-6 border-b border-secondary-200 dark:border-dark-2">
     <div class="flex items-center gap-3">
-      <div class="flex items-center justify-center w-10 h-10 bg-primary-5 dark:bg-dark-7 rounded-lg">
-        <x-lucide-flame class="w-6 h-6 text-white" />
+      <div class="flex items-center justify-center w-16 h-16 rounded-lg">
+                    <img src="{{ asset('storage/logos/logo_bomberos.webp') }}" alt="Logo Bomberos"
+                        class="w-full h-full object-cover">
       </div>
       <div>
         <h1 class="text-lg font-bold text-secondary-800 dark:text-secondary-100">Bomberos</h1>
@@ -20,7 +21,7 @@
   <nav class="flex-1 p-4 space-y-1 overflow-y-auto" @click="window.innerWidth < 1024 && $store.sidebar.close()">
     <x-admin.nav-link href="{{ route('admin.zone') }}" :active="request()->routeIs('admin.zone')">
       <x-lucide-layout-dashboard class="w-5 h-5" />
-      <span>Dashboard</span>
+      <span>Panel de Administración</span>
     </x-admin.nav-link>
 
     <x-admin.nav-link href="{{ route('admin.users.index') }}" :active="request()->routeIs('admin.users.*')">

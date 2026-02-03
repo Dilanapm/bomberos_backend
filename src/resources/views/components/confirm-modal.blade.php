@@ -85,6 +85,12 @@
           <template x-if="icon === 'log-out'">
             <x-lucide-log-out :class="iconColor" class="w-8 h-8" />
           </template>
+          <template x-if="icon === 'user-x'">
+            <x-lucide-user-x :class="iconColor" class="w-8 h-8" />
+          </template>
+          <template x-if="icon === 'user-check'">
+            <x-lucide-user-check :class="iconColor" class="w-8 h-8" />
+          </template>
         </div>
       </div>
 

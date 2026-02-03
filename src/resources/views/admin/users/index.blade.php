@@ -3,19 +3,6 @@
   <x-slot:subtitle>Administra cuentas y permisos del sistema</x-slot:subtitle>
 
   <div class="space-y-6">
-    <!-- Session Messages -->
-    @if (session('success'))
-      <x-alert type="success">
-        {{ session('success') }}
-      </x-alert>
-    @endif
-
-    @if (session('error'))
-      <x-alert type="error">
-        {{ session('error') }}
-      </x-alert>
-    @endif
-
     <!-- Filters & Actions -->
     <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2 p-6">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -133,13 +120,18 @@
                   @endforeach
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  @if ($user->email_verified_at)
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-success-100 text-success-700">
+                  @if ($user->isDisabled())
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-1 text-primary-6">
+                      <x-lucide-user-x class="w-3 h-3" />
+                      Desactivado
+                    </span>
+                  @elseif ($user->email_verified_at)
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-success-200 text-success-600">
                       <x-lucide-check-circle class="w-3 h-3" />
-                      Verificado
+                      Activo
                     </span>
                   @else
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 dark:text-secondary-400">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-accent-200 text-accent-500">
                       <x-lucide-alert-circle class="w-3 h-3" />
                       Pendiente
                     </span>
@@ -157,39 +149,59 @@
                     >
                       <x-lucide-eye class="w-5 h-5" />
                     </a>
-                    <a
-                      href="{{ route('admin.users.edit', $user) }}"
-                      class="text-accent-500 dark:text-dark-8 hover:text-accent-600 dark:hover:text-dark-9 transition-colors"
-                      title="Editar"
-                    >
-                      <x-lucide-edit class="w-5 h-5" />
-                    </a>
-                    @if ($user->id !== auth()->id())
-                      <form
-                        method="POST"
-                        action="{{ route('admin.users.destroy', $user) }}"
-                        @submit.prevent="$dispatch('confirm-modal', {
-                          title: 'Eliminar Usuario',
-                          message: '¿Estás seguro de eliminar a {{ addslashes($user->name) }}?\n\nEsta acción no se puede deshacer y se eliminarán todos los datos asociados.',
-                          confirmText: 'Eliminar',
-                          cancelText: 'Cancelar',
-                          icon: 'trash-2',
-                          iconColor: 'text-primary-6',
-                          iconBg: 'bg-primary-1',
-                          onConfirm: () => { $el.closest('form').submit() }
-                        })"
+                    @if (!$user->hasRole('admin') || $user->id === auth()->id())
+                      <a
+                        href="{{ route('admin.users.edit', $user) }}"
+                        class="text-accent-400 dark:text-accent-500 hover:text-accent-500 dark:hover:text-accent-300 transition-colors"
+                        title="Editar"
+                      >
+                        <x-lucide-edit class="w-5 h-5" />
+                      </a>
+                    @endif
+                    @if ($user->id !== auth()->id() && !$user->hasRole('admin'))
+                      <div
+                        x-data="{
+                          formId: 'form-toggle-user-{{ $user->id }}',
+                          modalData: {
+                            title: @js($user->isDisabled() ? 'Activar Usuario' : 'Desactivar Usuario'),
+                            message: @js($user->isDisabled() ? "¿Estás seguro de activar a {$user->name}?\n\nEl usuario podrá acceder nuevamente al sistema." : "¿Estás seguro de desactivar a {$user->name}?\n\nEl usuario no podrá acceder al sistema hasta que sea activado nuevamente."),
+                            confirmText: @js($user->isDisabled() ? 'Activar' : 'Desactivar'),
+                            cancelText: 'Cancelar',
+                            icon: @js($user->isDisabled() ? 'user-check' : 'user-x'),
+                            iconColor: @js($user->isDisabled() ? 'text-success-600' : 'text-primary-6'),
+                            iconBg: @js($user->isDisabled() ? 'bg-success-100' : 'bg-primary-1')
+                          },
+                          confirm() {
+                            $dispatch('confirm-modal', {
+                              ...this.modalData,
+                              onConfirm: () => { document.getElementById(this.formId).submit() }
+                            });
+                          }
+                        }"
                         class="inline"
                       >
-                        @csrf
-                        @method('DELETE')
-                        <button
-                          type="submit"
-                          class="text-primary-5 hover:text-primary-7 transition-colors"
-                          title="Eliminar"
+                        <form
+                          method="POST"
+                          action="{{ route('admin.users.destroy', $user) }}"
+                          :id="formId"
+                          class="inline"
                         >
-                          <x-lucide-trash-2 class="w-5 h-5" />
-                        </button>
-                      </form>
+                          @csrf
+                          @method('DELETE')
+                          <button
+                            type="button"
+                            @click="confirm()"
+                            class="{{ $user->isDisabled() ? 'text-success-500 hover:text-success-700' : 'text-primary-5 hover:text-primary-2' }} transition-colors"
+                            title="{{ $user->isDisabled() ? 'Activar' : 'Desactivar' }}"
+                          >
+                            @if ($user->isDisabled())
+                              <x-lucide-user-check class="w-5 h-5" />
+                            @else
+                              <x-lucide-user-x class="w-5 h-5" />
+                            @endif
+                          </button>
+                        </form>
+                      </div>
                     @endif
                   </div>
                 </td>

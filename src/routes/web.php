@@ -18,7 +18,7 @@ use App\Http\Controllers\Admin\UserController;
 */
 
 // 1) Registro (attest) SOLO admin autenticado
-Route::middleware(['web', 'auth', 'role:admin', '2fa.required', 'password.confirm'])
+Route::middleware(['web', 'auth', 'verified', 'role:admin', '2fa.required', 'password.confirm'])
     ->group(function () {
         WebAuthnRoutes::register(
             attest: 'admin/passkeys',
@@ -30,7 +30,7 @@ Route::middleware(['web', 'auth', 'role:admin', '2fa.required', 'password.confir
 Route::middleware(['web'])
     ->group(function () {
         WebAuthnRoutes::register(
-            attest: 'passkeys-register-public', // existe pero no lo usamos aquí
+            attest: 'passkeys-register-public', // existe pero probablemente no lo vaya a usar
             assert: 'passkeys-login'
         );
     });
@@ -40,7 +40,7 @@ Route::middleware(['web'])
 | Admin (Web)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['web', 'auth', 'role:admin', '2fa.required', 'admin.passkey.required', 'prevent.back'])
+Route::middleware(['web', 'auth', 'verified', 'role:admin', '2fa.required', 'admin.passkey.required', 'prevent.back'])
     ->prefix('admin')
     ->group(function () {
 
@@ -62,5 +62,5 @@ Route::middleware(['web', 'auth', 'role:admin', '2fa.required', 'admin.passkey.r
 |--------------------------------------------------------------------------
 */
 Route::get('/2fa-setup', TwoFactorSetup::class)
-  ->middleware(['web','auth','password.confirm','prevent.back'])
+  ->middleware(['web', 'auth', 'verified', 'password.confirm', 'prevent.back'])
   ->name('2fa.setup');

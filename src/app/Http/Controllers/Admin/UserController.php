@@ -66,13 +66,15 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'email_verified_at' => now(), // Auto-verificar
         ]);
 
         $user->assignRole($validated['role']);
+        
+        // Enviar email de verificación
+        $user->sendEmailVerificationNotification();
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'Usuario creado exitosamente.');
+            ->with('success', 'Usuario creado exitosamente. Se ha enviado un correo de verificación.');
     }
 
     /**
@@ -90,6 +92,12 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        // Un admin no puede editar a otro admin (excepto a sí mismo)
+        if ($user->hasRole('admin') && $user->id !== auth()->id()) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'No puedes editar la información de otro administrador.');
+        }
+
         return view('admin.users.edit', [
             'user' => $user,
             'roles' => Role::all(),
@@ -101,6 +109,12 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // Un admin no puede actualizar a otro admin (excepto a sí mismo)
+        if ($user->hasRole('admin') && $user->id !== auth()->id()) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'No puedes modificar la información de otro administrador.');
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
@@ -128,18 +142,30 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified user from storage.
+     * Deactivate or reactivate the specified user.
      */
     public function destroy(User $user)
     {
-        // Prevenir auto-eliminación
+        // Prevenir auto-desactivación si es admin
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'No puedes eliminarte a ti mismo.');
+            return back()->with('error', 'No puedes desactivar tu propia cuenta.');
         }
 
-        $user->delete();
+        // Prevenir desactivación de otros administradores
+        if ($user->hasRole('admin')) {
+            return back()->with('error', 'No puedes desactivar la cuenta de un administrador.');
+        }
+
+        // Verificar si el usuario está desactivado para reactivarlo o desactivarlo
+        if ($user->isDisabled()) {
+            $user->update(['disabled_at' => null]);
+            $message = 'Usuario activado exitosamente.';
+        } else {
+            $user->update(['disabled_at' => now()]);
+            $message = 'Usuario desactivado exitosamente.';
+        }
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'Usuario eliminado exitosamente.');
+            ->with('success', $message);
     }
 }

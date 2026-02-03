@@ -68,7 +68,6 @@ class TwoFactorSetup extends Component
 
         // Si por política solo admin usa web, corta aquí:
         if (! $user->hasRole('admin')) {
-            // Puedes mandarlo a /dashboard, o a una vista de "no permitido"
             return '/login';
         }
 

@@ -121,5 +121,8 @@ class FortifyServiceProvider extends ServiceProvider
 
         // Solo si vas a permitir registro (si no, puedes comentar estas 2 líneas)
         Fortify::registerView(fn () => view('auth.register'));
+        
+        // Verificación de email
+        Fortify::verifyEmailView(fn () => view('auth.verify-email'));
     }
 }

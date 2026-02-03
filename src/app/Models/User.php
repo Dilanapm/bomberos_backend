@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +10,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Laragear\WebAuthn\Contracts\WebAuthnAuthenticatable;
 use Laragear\WebAuthn\WebAuthnAuthentication;
-class User extends Authenticatable implements WebAuthnAuthenticatable
+
+class User extends Authenticatable implements WebAuthnAuthenticatable, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, TwoFactorAuthenticatable, WebAuthnAuthentication;
@@ -24,6 +25,7 @@ class User extends Authenticatable implements WebAuthnAuthenticatable
         'name',
         'email',
         'password',
+        'disabled_at',
     ];
 
     /**
@@ -45,7 +47,24 @@ class User extends Authenticatable implements WebAuthnAuthenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'disabled_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Verifica si el usuario está activo
+     */
+    public function isActive(): bool
+    {
+        return is_null($this->disabled_at);
+    }
+
+    /**
+     * Verifica si el usuario está desactivado
+     */
+    public function isDisabled(): bool
+    {
+        return !is_null($this->disabled_at);
     }
 }

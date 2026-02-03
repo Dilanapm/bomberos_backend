@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.passkey.required' => \App\Http\Middleware\EnsureAdminHasPasskey::class,
             'admin.only' => \App\Http\Middleware\OnlyAdminCanUseWeb::class, // Middleware para bloquear no-admins
             'prevent.back' => \App\Http\Middleware\PreventBackHistory::class,
+            'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
             // Spatie Permission Middleware aliases
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,

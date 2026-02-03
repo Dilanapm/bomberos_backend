@@ -1,5 +1,5 @@
 <x-layouts.admin>
-  <x-slot:title>Dashboard</x-slot:title>
+  <x-slot:title>Panel de Administración</x-slot:title>
 
   <div class="space-y-6">
     <!-- Welcome Card -->
