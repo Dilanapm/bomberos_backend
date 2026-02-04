@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -45,8 +46,11 @@ class UserController extends Controller
      */
     public function create()
     {
+        // Mostrar todos los roles disponibles
+        $roles = Role::whereIn('name', ['admin', 'instructor', 'aprendiz'])->get();
+        
         return view('admin.users.create', [
-            'roles' => Role::all(),
+            'roles' => $roles,
         ]);
     }
 
@@ -73,6 +77,9 @@ class UserController extends Controller
         // Enviar email de verificación
         $user->sendEmailVerificationNotification();
 
+        // Registrar actividad
+        ActivityLogger::userCreated($user);
+
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuario creado exitosamente. Se ha enviado un correo de verificación.');
     }
@@ -98,9 +105,17 @@ class UserController extends Controller
                 ->with('error', 'No puedes editar la información de otro administrador.');
         }
 
+        // Si es admin editando su propio perfil, mostrar solo su rol actual
+        // Si no, mostrar roles de app móvil (instructor y aprendiz)
+        if ($user->hasRole('admin')) {
+            $roles = Role::where('name', 'admin')->get();
+        } else {
+            $roles = Role::whereIn('name', ['instructor', 'aprendiz'])->get();
+        }
+
         return view('admin.users.edit', [
             'user' => $user,
-            'roles' => Role::all(),
+            'roles' => $roles,
         ]);
     }
 
@@ -122,6 +137,15 @@ class UserController extends Controller
             'role' => ['required', 'exists:roles,name'],
         ]);
 
+        // Capturar cambios antes de actualizar
+        $changes = [];
+        if ($user->name !== $validated['name']) {
+            $changes['name'] = ['old' => $user->name, 'new' => $validated['name']];
+        }
+        if ($user->email !== $validated['email']) {
+            $changes['email'] = ['old' => $user->email, 'new' => $validated['email']];
+        }
+
         $user->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -132,10 +156,22 @@ class UserController extends Controller
             $user->update([
                 'password' => Hash::make($validated['password']),
             ]);
+            $changes['password'] = 'actualizada';
         }
 
         // Sincronizar roles
+        $oldRoles = $user->getRoleNames()->toArray();
         $user->syncRoles([$validated['role']]);
+        $newRoles = $user->fresh()->getRoleNames()->toArray();
+        
+        if ($oldRoles !== $newRoles) {
+            $changes['roles'] = ['old' => $oldRoles, 'new' => $newRoles];
+        }
+
+        // Registrar actividad solo si hubo cambios
+        if (!empty($changes)) {
+            ActivityLogger::userUpdated($user, $changes);
+        }
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuario actualizado exitosamente.');
@@ -159,9 +195,11 @@ class UserController extends Controller
         // Verificar si el usuario está desactivado para reactivarlo o desactivarlo
         if ($user->isDisabled()) {
             $user->update(['disabled_at' => null]);
+            ActivityLogger::userActivated($user);
             $message = 'Usuario activado exitosamente.';
         } else {
             $user->update(['disabled_at' => now()]);
+            ActivityLogger::userDeactivated($user);
             $message = 'Usuario desactivado exitosamente.';
         }
 

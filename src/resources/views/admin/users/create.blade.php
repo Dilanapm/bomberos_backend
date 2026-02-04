@@ -14,9 +14,24 @@
       </a>
     </div>
 
+    <!-- Info Alert -->
+    <div class="bg-blue-50 dark:bg-dark-1 border border-secondary-700 dark:border-secondary-200 rounded-xl p-4 mb-6">
+      <div class="flex items-start gap-3">
+        <x-lucide-info class="w-5 h-5 text-blue-600 dark:text-secondary-400 flex-shrink-0 mt-0.5" />
+        <div>
+          <h3 class="text-sm font-semibold text-secondary-900 dark:text-secondary-100 mb-1">Roles Disponibles</h3>
+          <ul class="text-sm text-secondary-900 dark:text-secondary-300 space-y-1">
+            <li><strong>Admin:</strong> Acceso completo al panel de administración web</li>
+            <li><strong>Instructor:</strong> Solo acceso a la aplicación móvil</li>
+            <li><strong>Aprendiz:</strong> Solo acceso a la aplicación móvil</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <!-- Form Card -->
     <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2 p-8">
-      <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-6">
+      <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-6" novalidate>
         @csrf
 
         <!-- Name Field -->

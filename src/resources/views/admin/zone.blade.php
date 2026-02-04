@@ -61,7 +61,7 @@
         Acciones Rápidas
       </h4>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 p-4 bg-secondary-50 dark:bg-dark-1 hover:bg-secondary-100 dark:hover:bg-dark-2 rounded-lg transition-colors group">
+        <a href="{{ route('admin.users.create') }}" class="flex items-center gap-3 p-4 bg-secondary-50 dark:bg-dark-1 hover:bg-secondary-100 dark:hover:bg-dark-2 rounded-lg transition-colors group">
           <div class="flex items-center justify-center w-10 h-10 bg-primary-5 rounded-lg group-hover:scale-110 transition-transform">
             <x-lucide-user-plus class="w-5 h-5 text-white" />
           </div>
@@ -103,16 +103,63 @@
       </div>
     </div>
 
-    <!-- Recent Activity Placeholder -->
+    <!-- Recent Activity -->
     <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2 p-6">
       <h4 class="text-lg font-bold text-secondary-800 dark:text-secondary-100 mb-4 flex items-center gap-2">
         <x-lucide-clock class="w-5 h-5 text-primary-5 dark:text-dark-7" />
         Actividad Reciente
       </h4>
-      <div class="text-center py-8 text-secondary-400 dark:text-secondary-500">
-        <x-lucide-inbox class="w-12 h-12 mx-auto mb-3 opacity-50" />
-        <p>No hay actividad reciente para mostrar</p>
-      </div>
+      
+      @php
+        $recentActivities = \App\Models\ActivityLog::with(['user', 'causer'])
+          ->latest()
+          ->take(10)
+          ->get();
+      @endphp
+
+      @if($recentActivities->isEmpty())
+        <div class="text-center py-8 text-secondary-400 dark:text-secondary-500">
+          <x-lucide-inbox class="w-12 h-12 mx-auto mb-3 opacity-50" />
+          <p>No hay actividad reciente para mostrar</p>
+        </div>
+      @else
+        <div class="space-y-3">
+          @foreach($recentActivities as $activity)
+            <div class="flex items-start gap-3 p-3 bg-secondary-50 dark:bg-dark-1 rounded-lg hover:bg-secondary-100 dark:hover:bg-dark-2 transition-colors">
+              <div class="flex-shrink-0">
+                <div class="flex items-center justify-center w-10 h-10 bg-white dark:bg-dark-2 rounded-lg shadow-sm">
+                  <x-dynamic-component :component="'lucide-' . $activity->icon" class="w-5 h-5 {{ $activity->color }}" />
+                </div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-secondary-800 dark:text-secondary-100">
+                  {{ $activity->description }}
+                </p>
+                <div class="flex items-center gap-2 mt-1 text-xs text-secondary-500 dark:text-secondary-400">
+                  @if($activity->causer)
+                    <span class="flex items-center gap-1">
+                      <x-lucide-user class="w-3 h-3" />
+                      {{ $activity->causer->name }}
+                    </span>
+                    <span>•</span>
+                  @endif
+                  <span class="flex items-center gap-1">
+                    <x-lucide-clock class="w-3 h-3" />
+                    {{ $activity->created_at->diffForHumans() }}
+                  </span>
+                  @if($activity->ip_address)
+                    <span>•</span>
+                    <span class="flex items-center gap-1">
+                      <x-lucide-map-pin class="w-3 h-3" />
+                      {{ $activity->ip_address }}
+                    </span>
+                  @endif
+                </div>
+              </div>
+            </div>
+          @endforeach
+        </div>
+      @endif
     </div>
   </div>
 </x-layouts.admin>
