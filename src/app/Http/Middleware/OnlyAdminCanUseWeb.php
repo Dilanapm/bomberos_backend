@@ -53,7 +53,7 @@ class OnlyAdminCanUseWeb
             auth()->logout();
 
             return redirect('/login')
-                ->withErrors(['email' => 'Este usuario no tiene acceso a la plataforma web.']);
+                ->withErrors(['email' => 'Tu cuenta no tiene acceso a la plataforma web. Por favor, utiliza la aplicación móvil.']);
         }
 
         return $next($request);
