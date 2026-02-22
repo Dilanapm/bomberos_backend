@@ -109,6 +109,73 @@
           @enderror
         </div>
 
+        <!-- View Permissions Section (Only for non-admin users) -->
+        @if(!$user->hasRole('admin'))
+          <div class="border-t border-secondary-200 dark:border-dark-2 pt-6">
+            <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100 mb-2 flex items-center gap-2">
+              <x-lucide-eye class="w-5 h-5 text-primary-5 dark:text-dark-7" />
+              Permisos de Vistas
+            </h3>
+            <p class="text-sm text-secondary-600 dark:text-secondary-300 mb-4">
+              Habilita o deshabilita el acceso a diferentes módulos en la aplicación móvil.
+            </p>
+
+            <div class="space-y-4">
+              <!-- AI Module Permission -->
+              <div class="flex items-start gap-3 p-4 bg-secondary-50 dark:bg-dark-1 rounded-lg border border-secondary-200 dark:border-dark-2">
+                <input
+                  type="checkbox"
+                  id="can_access_ai_module"
+                  name="can_access_ai_module"
+                  value="1"
+                  {{ old('can_access_ai_module', $user->can_access_ai_module) ? 'checked' : '' }}
+                  class="mt-1 w-5 h-5 text-primary-5 border-secondary-300 dark:border-dark-3 rounded focus:ring-2 focus:ring-primary-5"
+                />
+                <div class="flex-1">
+                  <label for="can_access_ai_module" class="block text-sm font-semibold text-secondary-800 dark:text-secondary-100 cursor-pointer">
+                    Módulo de Inteligencia Artificial
+                  </label>
+                  <p class="text-xs text-secondary-500 dark:text-secondary-400 mt-1">
+                    Permite acceder al asistente de IA para consultas y ayuda en tiempo real.
+                  </p>
+                </div>
+                <x-lucide-bot class="w-5 h-5 text-primary-5 dark:text-dark-7 flex-shrink-0" />
+              </div>
+
+              <!-- Student Stats Permission (Only for instructors) -->
+              @if($user->hasRole('instructor'))
+                <div class="flex items-start gap-3 p-4 bg-secondary-50 dark:bg-dark-1 rounded-lg border border-secondary-200 dark:border-dark-2">
+                  <input
+                    type="checkbox"
+                    id="can_view_student_stats"
+                    name="can_view_student_stats"
+                    value="1"
+                    {{ old('can_view_student_stats', $user->can_view_student_stats) ? 'checked' : '' }}
+                    class="mt-1 w-5 h-5 text-primary-5 border-secondary-300 dark:border-dark-3 rounded focus:ring-2 focus:ring-primary-5"
+                  />
+                  <div class="flex-1">
+                    <label for="can_view_student_stats" class="block text-sm font-semibold text-secondary-800 dark:text-secondary-100 cursor-pointer">
+                      Estadísticas de Aprendices
+                    </label>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400 mt-1">
+                      Permite visualizar el progreso, calificaciones y estadísticas de los aprendices asignados.
+                    </p>
+                  </div>
+                  <x-lucide-bar-chart-3 class="w-5 h-5 text-primary-5 dark:text-dark-7 flex-shrink-0" />
+                </div>
+              @endif
+
+              <!-- Info Banner -->
+              <div class="flex items-start gap-3 p-4 bg-secondary-50 dark:bg-dark-1 rounded-lg border border-secondary-200 dark:border-dark-2">
+                <x-lucide-info class="w-5 h-5 text-dark-1 dark:text-secondary-300 flex-shrink-0 mt-0.5" />
+                <p class="text-sm text-secondary-800 dark:text-secondary-100">
+                  Estos permisos solo aplican para la aplicación móvil. Los cambios se reflejarán inmediatamente después de guardar.
+                </p>
+              </div>
+            </div>
+          </div>
+        @endif
+
         <!-- Divider -->
         <div class="border-t border-secondary-200 dark:border-dark-2 pt-6">
           <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100 mb-4 flex items-center gap-2">

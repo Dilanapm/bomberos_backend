@@ -123,4 +123,31 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | API Client Key (Mobile App)
+    |--------------------------------------------------------------------------
+    |
+    | Clave secreta compartida entre el backend y la app Flutter.
+    | Debe enviarse en el header X-Client-Key en cada petición a /api/*.
+    | Genera una con: php artisan key:generate --show | base64
+    | o: openssl rand -hex 32
+    |
+    */
+
+    'api_client_key' => env('API_CLIENT_KEY', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mobile App Deep Link Scheme (Flutter)
+    |--------------------------------------------------------------------------
+    |
+    | Esquema URL usado en los deep links enviados por correo a la app Flutter.
+    | Ejemplo: "bomberos" genera enlaces como bomberos://reset-password?token=xxx
+    | Debe coincidir con el scheme registrado en AndroidManifest.xml / Info.plist
+    |
+    */
+
+    'mobile_scheme' => env('APP_MOBILE_SCHEME', 'bomberos'),
+
 ];

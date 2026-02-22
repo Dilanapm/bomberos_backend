@@ -64,12 +64,16 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
             'role' => ['required', 'exists:roles,name'],
+            'can_access_ai_module' => ['nullable', 'boolean'],
+            'can_view_student_stats' => ['nullable', 'boolean'],
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'can_access_ai_module' => $validated['can_access_ai_module'] ?? false,
+            'can_view_student_stats' => $validated['can_view_student_stats'] ?? false,
         ]);
 
         $user->assignRole($validated['role']);
@@ -135,6 +139,8 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'confirmed', Password::defaults()],
             'role' => ['required', 'exists:roles,name'],
+            'can_access_ai_module' => ['nullable', 'boolean'],
+            'can_view_student_stats' => ['nullable', 'boolean'],
         ]);
 
         // Capturar cambios antes de actualizar
@@ -146,10 +152,29 @@ class UserController extends Controller
             $changes['email'] = ['old' => $user->email, 'new' => $validated['email']];
         }
 
+        // Actualizar datos básicos
         $user->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
         ]);
+
+        // Actualizar permisos de vistas (solo para no-admin)
+        if (!$user->hasRole('admin')) {
+            $oldAiAccess = $user->can_access_ai_module;
+            $oldStatsAccess = $user->can_view_student_stats;
+            
+            $user->update([
+                'can_access_ai_module' => $request->has('can_access_ai_module'),
+                'can_view_student_stats' => $request->has('can_view_student_stats'),
+            ]);
+            
+            if ($oldAiAccess !== $user->can_access_ai_module) {
+                $changes['can_access_ai_module'] = ['old' => $oldAiAccess, 'new' => $user->can_access_ai_module];
+            }
+            if ($oldStatsAccess !== $user->can_view_student_stats) {
+                $changes['can_view_student_stats'] = ['old' => $oldStatsAccess, 'new' => $user->can_view_student_stats];
+            }
+        }
 
         // Actualizar contraseña solo si se proporciona
         if ($request->filled('password')) {
