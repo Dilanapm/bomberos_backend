@@ -22,10 +22,9 @@ class OtpService
     {
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        $user->update([
-            'email_otp'            => $code,
-            'email_otp_expires_at' => now()->addMinutes(10),
-        ]);
+        $user->email_otp            = $code;
+        $user->email_otp_expires_at = now()->addMinutes(10);
+        $user->save();
 
         $user->notify(new MobileEmailVerificationNotification($code));
     }

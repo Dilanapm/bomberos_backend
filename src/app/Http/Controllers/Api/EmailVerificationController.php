@@ -66,11 +66,11 @@ class EmailVerificationController extends Controller
         }
 
         // Marcar email como verificado y limpiar el OTP
-        $user->update([
-            'email_verified_at'    => now(),
-            'email_otp'            => null,
-            'email_otp_expires_at' => null,
-        ]);
+        // Usamos asignación directa para evitar restricciones de mass assignment
+        $user->email_verified_at    = now();
+        $user->email_otp            = null;
+        $user->email_otp_expires_at = null;
+        $user->save();
 
         // Emitir token Sanctum
         $tokenName  = 'mobile_' . $user->id . '_' . now()->timestamp;

@@ -18,7 +18,10 @@ use App\Http\Controllers\Admin\UserController;
 */
 
 // 1) Registro (attest) SOLO admin autenticado
-Route::middleware(['web', 'auth', 'verified', 'role:admin', '2fa.required', 'password.confirm'])
+// Sin 2fa.required ni password.confirm en los endpoints WebAuthn —
+// son llamadas fetch/XHR que no pueden seguir redirects.
+// La confirmación de password ocurre en la UI (/admin/passkeys-ui) antes de iniciar.
+Route::middleware(['web', 'auth', 'verified', 'role:admin'])
     ->group(function () {
         WebAuthnRoutes::register(
             attest: 'admin/passkeys',
@@ -40,12 +43,12 @@ Route::middleware(['web'])
 | Admin (Web)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['web', 'auth', 'verified', 'role:admin', '2fa.required', 'admin.passkey.required', 'prevent.back'])
+Route::middleware(['web', 'auth', 'verified', 'role:admin', '2fa.required', 'prevent.back'])
     ->prefix('admin')
     ->group(function () {
 
         // Dashboard principal
-        Route::get('/zone', fn () => view('admin.zone'))->name('admin.zone');
+        Route::get('/zone', fn() => view('admin.zone'))->name('admin.zone');
 
         // Gestión de usuarios
         Route::resource('users', UserController::class)->names('admin.users');
@@ -62,5 +65,5 @@ Route::middleware(['web', 'auth', 'verified', 'role:admin', '2fa.required', 'adm
 |--------------------------------------------------------------------------
 */
 Route::get('/2fa-setup', TwoFactorSetup::class)
-  ->middleware(['web', 'auth', 'verified', 'password.confirm', 'prevent.back'])
-  ->name('2fa.setup');
+    ->middleware(['web', 'auth', 'verified', 'password.confirm', 'prevent.back'])
+    ->name('2fa.setup');

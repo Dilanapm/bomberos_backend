@@ -2,8 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\AdminStatsController;
 use App\Http\Controllers\Api\EmailVerificationController;
+use App\Http\Controllers\Api\EvaluationController;
 use App\Http\Controllers\Api\InstructorCodeController;
+use App\Http\Controllers\Api\InstructorCommentController;
+use App\Http\Controllers\Api\InstructorStatsController;
 use App\Http\Controllers\Api\MobileAuthController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\ProfileController;
@@ -97,13 +101,93 @@ Route::prefix('v1')->group(function () {
             // Revocar código activo manualmente
             Route::delete('/registration-code', [InstructorCodeController::class, 'revoke'])
                 ->name('api.v1.instructor.code.revoke');
+
+            // Comentarios en evaluaciones de aprendices
+            Route::prefix('evaluations/{evaluationId}/comments')
+                ->where(['evaluationId' => '[0-9]+'])
+                ->group(function () {
+                    Route::get('/',               [InstructorCommentController::class, 'index'])
+                        ->name('api.v1.instructor.comments.index');
+                    Route::post('/',              [InstructorCommentController::class, 'store'])
+                        ->name('api.v1.instructor.comments.store');
+                    Route::delete('/{commentId}', [InstructorCommentController::class, 'destroy'])
+                        ->where(['commentId' => '[0-9]+'])
+                        ->name('api.v1.instructor.comments.destroy');
+                });
+
+            // ── Evaluaciones EPP (instructor) ────────────────────────────
+            // Guardar una evaluación en nombre de un aprendiz (user_id en body)
+            Route::post('/evaluations',             [EvaluationController::class, 'store'])
+                ->name('api.v1.instructor.evaluations.store');
+
+            // Detalle completo de cualquier evaluación
+            Route::get('/evaluations/{id}',         [EvaluationController::class, 'show'])
+                ->where('id', '[0-9]+')
+                ->name('api.v1.instructor.evaluations.show');
+
+            // Lista de aprendices que tienen al menos una evaluación
+            Route::get('/aprendices',               [EvaluationController::class, 'aprendices'])
+                ->name('api.v1.instructor.aprendices.index');
+
+            // Historial de evaluaciones de un aprendiz específico
+            Route::get('/aprendices/{aprendizId}/evaluations', [EvaluationController::class, 'historyForAprendiz'])
+                ->where('aprendizId', '[0-9]+')
+                ->name('api.v1.instructor.aprendices.evaluations');
+
+            // ── Estadísticas del grupo (instructor) ──────────────────────
+            Route::prefix('stats')->group(function () {
+                Route::get('/my-group',      [InstructorStatsController::class, 'myGroup'])
+                    ->name('api.v1.instructor.stats.my-group');
+                Route::get('/ranking',       [InstructorStatsController::class, 'ranking'])
+                    ->name('api.v1.instructor.stats.ranking');
+                Route::get('/need-help',     [InstructorStatsController::class, 'needHelp'])
+                    ->name('api.v1.instructor.stats.need-help');
+                Route::get('/step-analysis', [InstructorStatsController::class, 'stepAnalysis'])
+                    ->name('api.v1.instructor.stats.step-analysis');
+            });
         });
 
     // ──────────────────────────────────────────────────────────────
-    //  Recursos futuros (protegidos por defecto)
+    //  Evaluaciones EPP (aprendiz autenticado)
     // ──────────────────────────────────────────────────────────────
-    Route::middleware(['auth:sanctum', 'mobile.access'])->group(function () {
-        // Route::apiResource('trainings', TrainingController::class);
-        // Route::apiResource('reports', ReportController::class);
-    });
+    Route::middleware(['auth:sanctum', 'mobile.access', 'role:aprendiz'])
+        ->prefix('evaluations')
+        ->group(function () {
+            // Guardar evaluación enviada por FastAPI
+            Route::post('/',            [EvaluationController::class, 'store'])
+                ->name('api.v1.evaluations.store');
+
+            // Historial paginado del aprendiz
+            Route::get('/',             [EvaluationController::class, 'history'])
+                ->name('api.v1.evaluations.history');
+
+            // Estadísticas del aprendiz (mejoradas)
+            Route::get('/stats',        [EvaluationController::class, 'stats'])
+                ->name('api.v1.evaluations.stats');
+
+            // Análisis avanzado del aprendiz
+            Route::get('/analytics',    [EvaluationController::class, 'analytics'])
+                ->name('api.v1.evaluations.analytics');
+
+            // Detalle de una evaluación específica
+            Route::get('/{id}',         [EvaluationController::class, 'show'])
+                ->where('id', '[0-9]+')
+                ->name('api.v1.evaluations.show');
+        });
+
+    // ──────────────────────────────────────────────────────────────
+    //  Estadísticas globales (administrador)
+    // ──────────────────────────────────────────────────────────────
+    Route::middleware(['auth:sanctum', 'role:admin'])
+        ->prefix('admin/stats')
+        ->group(function () {
+            Route::get('/global',        [AdminStatsController::class, 'global'])
+                ->name('api.v1.admin.stats.global');
+            Route::get('/instructors',   [AdminStatsController::class, 'instructors'])
+                ->name('api.v1.admin.stats.instructors');
+            Route::get('/step-analysis', [AdminStatsController::class, 'stepAnalysis'])
+                ->name('api.v1.admin.stats.step-analysis');
+            Route::get('/trends',        [AdminStatsController::class, 'trends'])
+                ->name('api.v1.admin.stats.trends');
+        });
 });

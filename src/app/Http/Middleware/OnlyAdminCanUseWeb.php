@@ -40,7 +40,7 @@ class OnlyAdminCanUseWeb
             return $next($request);
         }
 
-        // 🔒 SEGURIDAD CRÍTICA: Verificar si el usuario está desactivado
+        // SEGURIDAD CRÍTICA: Verificar si el usuario está desactivado
         if ($request->user()->isDisabled()) {
             auth()->logout();
 
@@ -48,7 +48,7 @@ class OnlyAdminCanUseWeb
                 ->withErrors(['email' => 'Tu cuenta ha sido desactivada. Contacta al administrador.']);
         }
 
-        // 🔒 SEGURIDAD CRÍTICA: Si está autenticado y NO es admin → BLOQUEAR
+        // SEGURIDAD CRÍTICA: Si está autenticado y NO es admin → BLOQUEAR
         if (! $request->user()->hasRole('admin')) {
             auth()->logout();
 

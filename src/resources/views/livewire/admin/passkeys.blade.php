@@ -1,66 +1,42 @@
 @php
-    $hasDisabled = isset($credentials) && $credentials->whereNotNull('disabled_at')->count() > 0;
+    $hasDisabled = false; // revocar ahora elimina directamente
 @endphp
 
 <div class="max-w-4xl space-y-6">
 
     <!-- Register Passkey Card -->
-    <div class="bg-gradient-to-r from-primary-5 to-primary-6 rounded-xl shadow-lg p-6 text-white">
+    <div class="rounded-xl bg-gradient-to-r from-primary-5 to-primary-6 p-6 text-white shadow-lg">
         <div class="flex items-start justify-between gap-4">
             <div class="flex-1">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-20 rounded-lg">
-                        <x-lucide-fingerprint class="w-6 h-6 text-white" />
+                <div class="mb-3 flex items-center gap-3">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-white bg-opacity-20">
+                        <x-lucide-fingerprint class="h-6 w-6 text-white" />
                     </div>
                     <h3 class="text-xl font-bold">Registrar Nueva Passkey</h3>
                 </div>
-                <p class="text-primary-1 mb-4">
+                <p class="mb-4 text-primary-1">
                     Usa tu huella dactilar, reconocimiento facial o clave de seguridad física para acceder de forma
                     rápida y segura.
                 </p>
                 <button type="button" id="btn-register-passkey"
-                    class="px-6 py-3 bg-white text-primary-6 rounded-lg font-semibold hover:bg-primary-1 transition-colors flex items-center gap-2">
-                    <x-lucide-plus class="w-5 h-5" />
+                    class="flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-primary-6 transition-colors hover:bg-primary-1">
+                    <x-lucide-plus class="h-5 w-5" />
                     Registrar Passkey
                 </button>
             </div>
             <div class="hidden lg:block">
-                <x-lucide-shield-check class="w-24 h-24 text-white opacity-20" />
+                <x-lucide-shield-check class="h-24 w-24 text-white opacity-20" />
             </div>
         </div>
-
-        @if ($hasDisabled)
-            <div class="mt-4 pt-4 border-t border-white border-opacity-20">
-                <p class="text-sm text-primary-1 mb-3">
-                    <x-lucide-alert-triangle class="w-4 h-4 inline" />
-                    Tienes passkeys revocadas. Elimínalas antes de registrar una nueva desde el mismo dispositivo.
-                </p>
-                <button type="button"
-                    @click="$dispatch('confirm-modal', {
-              title: 'Eliminar Passkeys Revocadas',
-              message: '¿Eliminar permanentemente las passkeys revocadas?\n\nEsto es necesario para registrar una nueva desde el mismo dispositivo.\n\nLos datos se eliminarán de forma permanente.',
-              confirmText: 'Eliminar',
-              cancelText: 'Cancelar',
-              icon: 'trash-2',
-              iconColor: 'text-primary-6',
-              iconBg: 'bg-primary-1',
-              onConfirm: () => { $wire.deleteDisabled() }
-            })"
-                    class="px-4 py-2 bg-primary-7 hover:bg-primary-8 text-white rounded-lg font-medium transition-colors flex items-center gap-2">
-                    <x-lucide-trash-2 class="w-4 h-4" />
-                    Eliminar Passkeys Revocadas
-                </button>
-            </div>
-        @endif
 
         <p id="passkey-status" class="mt-4 text-sm text-primary-1"></p>
     </div>
 
     <!-- Credentials List -->
-    <div class="bg-white dark:bg-dark-0 rounded-xl shadow-md border border-secondary-200 dark:border-dark-2">
-        <div class="p-6 border-b border-secondary-200 dark:border-dark-2">
-            <h3 class="text-lg font-bold text-secondary-800 dark:text-secondary-100 flex items-center gap-2">
-                <x-lucide-key class="w-5 h-5 text-primary-5 dark:text-dark-7" />
+    <div class="rounded-xl border border-secondary-200 bg-white shadow-md dark:border-dark-2 dark:bg-dark-0">
+        <div class="border-b border-secondary-200 p-6 dark:border-dark-2">
+            <h3 class="flex items-center gap-2 text-lg font-bold text-secondary-800 dark:text-secondary-100">
+                <x-lucide-key class="h-5 w-5 text-primary-5 dark:text-dark-7" />
                 Credenciales Registradas
             </h3>
         </div>
@@ -70,24 +46,24 @@
                 <div class="space-y-4">
                     @foreach ($credentials as $c)
                         <div
-                            class="p-4 border border-secondary-200 dark:border-dark-2 rounded-lg {{ $c->disabled_at ? 'bg-secondary-50 dark:bg-dark-1 opacity-60' : 'bg-white dark:bg-dark-0' }}">
+                            class="{{ $c->disabled_at ? 'bg-secondary-50 dark:bg-dark-1 opacity-60' : 'bg-white dark:bg-dark-0' }} rounded-lg border border-secondary-200 p-4 dark:border-dark-2">
                             <div class="flex items-start justify-between gap-4">
                                 <div class="flex-1">
                                     <!-- Credential Info -->
-                                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
+                                    <div class="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center">
                                         <div class="flex items-center gap-3">
                                             <div
-                                                class="flex items-center justify-center w-10 h-10 {{ $c->disabled_at ? 'bg-secondary-200 dark:bg-dark-2' : 'bg-primary-1 dark:bg-dark-2' }} rounded-lg flex-shrink-0">
+                                                class="{{ $c->disabled_at ? 'bg-secondary-200 dark:bg-dark-2' : 'bg-primary-1 dark:bg-dark-2' }} flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg">
                                                 <x-lucide-fingerprint
-                                                    class="w-5 h-5 {{ $c->disabled_at ? 'text-secondary-500 dark:text-secondary-600' : 'text-primary-6 dark:text-dark-7' }}" />
+                                                    class="{{ $c->disabled_at ? 'text-secondary-500 dark:text-secondary-600' : 'text-primary-6 dark:text-dark-7' }} h-5 w-5" />
                                             </div>
                                             <div class="min-w-0">
                                                 <p
-                                                    class="font-semibold text-secondary-800 dark:text-secondary-100 truncate">
+                                                    class="truncate font-semibold text-secondary-800 dark:text-secondary-100">
                                                     {{ $c->alias ?? 'Sin nombre' }}
                                                     @if ($c->disabled_at)
                                                         <span
-                                                            class="ml-2 text-xs font-medium text-primary-6 bg-primary-1 px-2 py-0.5 rounded whitespace-nowrap">
+                                                            class="ml-2 whitespace-nowrap rounded bg-primary-1 px-2 py-0.5 text-xs font-medium text-primary-6">
                                                             REVOCADA
                                                         </span>
                                                     @endif
@@ -103,28 +79,28 @@
                                     </div>
 
                                     <!-- Alias Input -->
-                                    <div class="flex flex-col lg:flex-row lg:items-start gap-3">
+                                    <div class="flex flex-col gap-3 lg:flex-row lg:items-start">
                                         <div class="flex-1">
                                             <label
-                                                class="block text-xs font-semibold text-secondary-700 dark:text-secondary-300 mb-1">
+                                                class="mb-1 block text-xs font-semibold text-secondary-700 dark:text-secondary-300">
                                                 Nombre identificador
                                             </label>
                                             <input type="text" wire:model.defer="alias.{{ $c->id }}"
                                                 placeholder="Ej: Laptop oficina, iPhone personal"
-                                                class="block w-full px-3 py-2 border border-secondary-300 dark:border-dark-3 dark:bg-dark-1 dark:text-secondary-100 rounded-lg focus:ring-2 focus:ring-primary-5 focus:border-primary-5 text-sm" />
+                                                class="block w-full rounded-lg border border-secondary-300 px-3 py-2 text-sm focus:border-primary-5 focus:ring-2 focus:ring-primary-5 dark:border-dark-3 dark:bg-dark-1 dark:text-secondary-100" />
                                             @error('alias.' . $c->id)
-                                                <p class="mt-1 text-xs text-primary-6 flex items-center gap-1">
-                                                    <x-lucide-alert-circle class="w-3 h-3" />
+                                                <p class="mt-1 flex items-center gap-1 text-xs text-primary-6">
+                                                    <x-lucide-alert-circle class="h-3 w-3" />
                                                     {{ $message }}
                                                 </p>
                                             @enderror
                                         </div>
 
-                                        <div class="flex flex-col sm:flex-row gap-2 lg:mt-6">
+                                        <div class="flex flex-col gap-2 sm:flex-row lg:mt-6">
                                             <button type="button" wire:click="saveAlias('{{ $c->id }}')"
-                                                class="px-4 py-2 bg-success-500 hover:bg-success-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-1 text-sm"
+                                                class="flex items-center justify-center gap-1 rounded-lg bg-success-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-success-600"
                                                 title="Guardar alias">
-                                                <x-lucide-save class="w-4 h-4" />
+                                                <x-lucide-save class="h-4 w-4" />
                                                 <span>Guardar</span>
                                             </button>
 
@@ -132,7 +108,7 @@
                                                 <button type="button"
                                                     @click="$dispatch('confirm-modal', {
                               title: 'Revocar Passkey',
-                              message: 'Al revocar esta passkey:\n\n• No podrás usarla para iniciar sesión\n• Si es tu única passkey activa, no podrás revocarla\n• Deberás registrar una nueva si eliminas todas\n\n¿Estás seguro de continuar?',
+                              message: 'Al revocar esta passkey:\n\n• No podrás usarla para iniciar sesión\n\n¿Estás seguro de continuar?',
                               confirmText: 'Revocar',
                               cancelText: 'Cancelar',
                               icon: 'ban',
@@ -140,9 +116,9 @@
                               iconBg: 'bg-primary-1',
                               onConfirm: () => { $wire.revoke('{{ $c->id }}') }
                             })"
-                                                    class="px-4 py-2 bg-primary-5 hover:bg-primary-6 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-1 text-sm"
+                                                    class="flex items-center justify-center gap-1 rounded-lg bg-primary-5 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-6"
                                                     title="Revocar">
-                                                    <x-lucide-ban class="w-4 h-4" />
+                                                    <x-lucide-ban class="h-4 w-4" />
                                                     <span>Revocar</span>
                                                 </button>
                                             @endif
@@ -154,10 +130,10 @@
                     @endforeach
                 </div>
             @else
-                <div class="text-center py-12">
+                <div class="py-12 text-center">
                     <div class="flex flex-col items-center justify-center text-secondary-400 dark:text-secondary-500">
-                        <x-lucide-fingerprint class="w-16 h-16 mb-4 opacity-50" />
-                        <p class="text-lg font-semibold mb-2">No tienes passkeys registradas</p>
+                        <x-lucide-fingerprint class="mb-4 h-16 w-16 opacity-50" />
+                        <p class="mb-2 text-lg font-semibold">No tienes passkeys registradas</p>
                         <p class="text-sm">Registra tu primera passkey usando el botón de arriba</p>
                     </div>
                 </div>
@@ -166,20 +142,20 @@
     </div>
 
     <!-- Info Card -->
-    <div class="bg-secondary-50 dark:bg-dark-1 border border-secondary-200 dark:border-dark-2 rounded-xl p-6">
+    <div class="rounded-xl border border-secondary-200 bg-secondary-50 p-6 dark:border-dark-2 dark:bg-dark-1">
         <div class="flex items-start gap-3">
-            <x-lucide-info class="w-5 h-5 text-secondary-600 dark:text-secondary-400 flex-shrink-0 mt-0.5" />
+            <x-lucide-info class="mt-0.5 h-5 w-5 flex-shrink-0 text-secondary-600 dark:text-secondary-400" />
             <div>
-                <h4 class="font-semibold text-secondary-800 dark:text-secondary-100 mb-2">¿Qué son las Passkeys?</h4>
-                <p class="text-sm text-secondary-600 dark:text-secondary-300 mb-3">
+                <h4 class="mb-2 font-semibold text-secondary-800 dark:text-secondary-100">¿Qué son las Passkeys?</h4>
+                <p class="mb-3 text-sm text-secondary-600 dark:text-secondary-300">
                     Las passkeys son credenciales de acceso basadas en criptografía que pueden
-                    reemplazar contraseñas. Se desbloquean con biometría  o con el método de desbloqueo
+                    reemplazar contraseñas. Se desbloquean con biometría o con el método de desbloqueo
                     del dispositivo PIN/contraseña o una llave de seguridad física.
                 </p>
                 <div
-                    class="bg-amber-50 border-l-4 border-amber-400 dark:bg-dark-3 dark:border-amber-600 dark:text-secondary-300 p-3 rounded">
-                    <p class="text-sm font-medium flex items-center gap-2 text-secondary-600 dark:text-secondary-300">
-                        <x-lucide-alert-triangle class="w-4 h-4" />
+                    class="bg-amber-50 border-amber-400 dark:border-amber-600 rounded border-l-4 p-3 dark:bg-dark-3 dark:text-secondary-300">
+                    <p class="flex items-center gap-2 text-sm font-medium text-secondary-600 dark:text-secondary-300">
+                        <x-lucide-alert-triangle class="h-4 w-4" />
                         Importante: Debes mantener al menos una passkey activa para acceder al sistema.
                     </p>
                 </div>
@@ -208,7 +184,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@laragear/webpass@2/dist/webpass.js" defer></script>
     <script>
-        const hasDisabledPasskeys = {{ $hasDisabled ? 'true' : 'false' }};
+        const hasDisabledPasskeys = false; // revocar ahora elimina directamente
 
         document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('btn-register-passkey');
@@ -216,13 +192,6 @@
 
             btn?.addEventListener('click', async () => {
                 status.textContent = '';
-
-                // Verificar si hay passkeys revocadas
-                if (hasDisabledPasskeys) {
-                    alert(
-                        'Primero debes eliminar las passkeys revocadas antes de registrar una nueva. Usa el botón "Eliminar passkeys revocadas".');
-                    return;
-                }
 
                 if (typeof Webpass === 'undefined' || Webpass.isUnsupported()) {
                     alert("Tu navegador/dispositivo no soporta Passkeys/WebAuthn.");

@@ -10,28 +10,8 @@ class EnsureAdminHasPasskey
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
-
-        // Solo aplica a admin autenticado
-        if (! $user || ! method_exists($user, 'hasRole') || ! $user->hasRole('admin')) {
-            return $next($request);
-        }
-
-        // No bloquear las rutas necesarias para salir del "loop"
-        if ($request->is('admin/passkeys-ui') ||
-            $request->is('admin/passkeys*') ||
-            $request->is('2fa-setup') ||
-            $request->is('user/confirm-password')) {
-            return $next($request);
-        }
-
-        // Si Laragear está bien instalado, el User tiene relación webAuthnCredentials()
-        $hasPasskey = method_exists($user, 'webAuthnCredentials')
-            && $user->webAuthnCredentials()->whereNull('disabled_at')->exists();
-        if (! $hasPasskey) {
-            return redirect()->route('admin.passkeys.ui');
-        }
-
+        // Passkey opcional — el admin puede usar la app sin tener registrada una passkey.
+        // La funcionalidad de passkeys sigue disponible desde la UI de perfil.
         return $next($request);
     }
 }

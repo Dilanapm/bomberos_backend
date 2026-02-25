@@ -25,7 +25,6 @@ class TwoFactorSetup extends Component
         }
 
         $this->redirect($this->nextUrlAfter2fa(), navigate: true);
-
     }
     public function getUserProperty()
     {
@@ -71,17 +70,14 @@ class TwoFactorSetup extends Component
             return '/login';
         }
 
-        // Admin: si no tiene passkeys -> UI, si tiene -> zona
-        return $this->adminHasActivePasskey()
-            ? route('admin.zone')
-            : route('admin.passkeys.ui');
+        // Admin: siempre redirigir a la zona admin (passkeys son opcionales)
+        return route('admin.zone');
     }
 
     public function enable(): void
     {
         $user = $this->user;
-        if (! $user) 
-        {
+        if (! $user) {
             $this->redirect('/login', navigate: true);
             return;
         }
@@ -98,8 +94,8 @@ class TwoFactorSetup extends Component
 
         $user = $this->user;
         if (! $user) {
-        $this->redirect('/login', navigate: true);
-        return;
+            $this->redirect('/login', navigate: true);
+            return;
         }
         app(ConfirmTwoFactorAuthentication::class)($user, $this->code);
 
@@ -120,9 +116,9 @@ class TwoFactorSetup extends Component
     {
         $user = $this->user;
         if (! $user) {
-        $this->redirect('/login', navigate: true);
-        return;
-    }
+            $this->redirect('/login', navigate: true);
+            return;
+        }
         app(GenerateNewRecoveryCodes::class)($user);
 
         $this->showRecoveryCodes = true;
@@ -147,7 +143,7 @@ class TwoFactorSetup extends Component
 
         $this->showRecoveryCodes = false;
         $this->code = '';
-        
+
         // Mensaje para que el usuario sepa que debe reactivarlo
         $this->dispatch('notify', type: 'warning', message: '2FA desactivado. Debes reactivarlo para continuar usando el sistema.');
     }

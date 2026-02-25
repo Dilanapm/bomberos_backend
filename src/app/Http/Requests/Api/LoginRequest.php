@@ -24,11 +24,7 @@ class LoginRequest extends FormRequest
     {
         return true;
     }
-
-    // ──────────────────────────────────────────────────
     //  Reglas de validación
-    // ──────────────────────────────────────────────────
-
     public function rules(): array
     {
         return [
@@ -48,11 +44,7 @@ class LoginRequest extends FormRequest
             'password.max'      => 'La contraseña no debe superar los 128 caracteres.',
         ];
     }
-
-    // ──────────────────────────────────────────────────
     //  Sanitización de inputs antes de validar
-    // ──────────────────────────────────────────────────
-
     protected function prepareForValidation(): void
     {
         // Eliminar espacios en el email y forzar minúsculas

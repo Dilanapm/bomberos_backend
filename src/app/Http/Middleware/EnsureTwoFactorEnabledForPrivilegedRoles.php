@@ -38,6 +38,8 @@ class EnsureTwoFactorEnabledForPrivilegedRoles
             '2fa-setup',
             'user/confirm-password',
             'logout',
+            'admin/passkeys',          // endpoints WebAuthn (fetch/XHR, no pueden seguir redirects)
+            'passkeys-login',
         ];
 
         $path = ltrim($request->path(), '/');
@@ -59,7 +61,6 @@ class EnsureTwoFactorEnabledForPrivilegedRoles
         // return redirect()->route('profile.show')
         //     ->with('error', 'Debes habilitar y confirmar 2FA para continuar.');
         return redirect('/2fa-setup')
-                ->with('error', 'Debes habilitar y confirmar 2FA para continuar.');
-
+            ->with('error', 'Debes habilitar y confirmar 2FA para continuar.');
     }
 }

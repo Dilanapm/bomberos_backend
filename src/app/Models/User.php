@@ -7,11 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Laragear\WebAuthn\Contracts\WebAuthnAuthenticatable;
 use Laragear\WebAuthn\WebAuthnAuthentication;
+use App\Models\EppEvaluation;
+use App\Models\EppInstructorComment;
 
 class User extends Authenticatable implements WebAuthnAuthenticatable, MustVerifyEmail
 {
@@ -61,6 +64,15 @@ class User extends Authenticatable implements WebAuthnAuthenticatable, MustVerif
             'can_access_ai_module'   => 'boolean',
             'can_view_student_stats' => 'boolean',
         ];
+    }
+
+    /**
+     * Mutador: siempre guarda el email en minúsculas y sin espacios.
+     * Se aplica en cualquier asignación: create(), update() o directa.
+     */
+    public function setEmailAttribute(string $value): void
+    {
+        $this->attributes['email'] = Str::lower(trim($value));
     }
 
     /**
@@ -115,35 +127,19 @@ class User extends Authenticatable implements WebAuthnAuthenticatable, MustVerif
     }
 
     /**
-     * Entrenamientos realizados por el usuario
+     * Evaluaciones EPP del usuario (aprendiz)
      */
-    public function trainings(): HasMany
+    public function evaluations(): HasMany
     {
-        return $this->hasMany(Training::class);
+        return $this->hasMany(EppEvaluation::class);
     }
 
     /**
-     * Entrenamientos donde el usuario es instructor
+     * Comentarios de instructor dejados por este usuario
      */
-    public function instructedTrainings(): HasMany
+    public function instructorComments(): HasMany
     {
-        return $this->hasMany(Training::class, 'instructor_id');
-    }
-
-    /**
-     * Reportes creados por el usuario
-     */
-    public function reports(): HasMany
-    {
-        return $this->hasMany(Report::class);
-    }
-
-    /**
-     * Reportes asignados al usuario
-     */
-    public function assignedReports(): HasMany
-    {
-        return $this->hasMany(Report::class, 'assigned_to');
+        return $this->hasMany(EppInstructorComment::class, 'instructor_id');
     }
 
     /**

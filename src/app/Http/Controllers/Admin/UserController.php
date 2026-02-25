@@ -24,7 +24,7 @@ class UserController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -48,7 +48,7 @@ class UserController extends Controller
     {
         // Mostrar todos los roles disponibles
         $roles = Role::whereIn('name', ['admin', 'instructor', 'aprendiz'])->get();
-        
+
         return view('admin.users.create', [
             'roles' => $roles,
         ]);
@@ -56,6 +56,7 @@ class UserController extends Controller
 
     /**
      * Store a newly created user in storage.
+     * Creación de usuario con asignación de rol y permisos, y registro de actividad. El usuario recibirá el correo de verificación al iniciar sesión por primera vez.
      */
     public function store(Request $request)
     {
@@ -77,15 +78,12 @@ class UserController extends Controller
         ]);
 
         $user->assignRole($validated['role']);
-        
-        // Enviar email de verificación
-        $user->sendEmailVerificationNotification();
 
         // Registrar actividad
         ActivityLogger::userCreated($user);
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'Usuario creado exitosamente. Se ha enviado un correo de verificación.');
+            ->with('success', 'Usuario creado exitosamente. El usuario recibirá el correo de verificación al iniciar sesión por primera vez.');
     }
 
     /**
@@ -162,12 +160,12 @@ class UserController extends Controller
         if (!$user->hasRole('admin')) {
             $oldAiAccess = $user->can_access_ai_module;
             $oldStatsAccess = $user->can_view_student_stats;
-            
+
             $user->update([
                 'can_access_ai_module' => $request->has('can_access_ai_module'),
                 'can_view_student_stats' => $request->has('can_view_student_stats'),
             ]);
-            
+
             if ($oldAiAccess !== $user->can_access_ai_module) {
                 $changes['can_access_ai_module'] = ['old' => $oldAiAccess, 'new' => $user->can_access_ai_module];
             }
@@ -188,7 +186,7 @@ class UserController extends Controller
         $oldRoles = $user->getRoleNames()->toArray();
         $user->syncRoles([$validated['role']]);
         $newRoles = $user->fresh()->getRoleNames()->toArray();
-        
+
         if ($oldRoles !== $newRoles) {
             $changes['roles'] = ['old' => $oldRoles, 'new' => $newRoles];
         }

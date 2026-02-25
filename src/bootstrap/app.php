@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Middlewares globales para TODAS las rutas /api/*
         $middleware->api(append: [
+            \Illuminate\Http\Middleware\HandleCors::class,
             \App\Http\Middleware\VerifyClientApiKey::class,
             \App\Http\Middleware\SecureApiHeaders::class,
         ]);
@@ -43,7 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         // Toda excepción en rutas /api/* se responde siempre con JSON
         $exceptions->shouldRenderJsonWhen(
-            fn (\Illuminate\Http\Request $request) => $request->is('api/*')
+            fn(\Illuminate\Http\Request $request) => $request->is('api/*')
         );
 
         // Excepción de validación → 422 con JSON estructurado
