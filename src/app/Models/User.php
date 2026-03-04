@@ -35,6 +35,7 @@ class User extends Authenticatable implements WebAuthnAuthenticatable, MustVerif
         'disabled_at',
         'can_access_ai_module',
         'can_view_student_stats',
+        'can_access_stats_module',
         'email_otp',
         'email_otp_expires_at',
     ];
@@ -63,6 +64,7 @@ class User extends Authenticatable implements WebAuthnAuthenticatable, MustVerif
             'password'               => 'hashed',
             'can_access_ai_module'   => 'boolean',
             'can_view_student_stats' => 'boolean',
+            'can_access_stats_module' => 'boolean',
         ];
     }
 
@@ -124,6 +126,14 @@ class User extends Authenticatable implements WebAuthnAuthenticatable, MustVerif
     public function canViewStudentStats(): bool
     {
         return $this->can_view_student_stats && $this->hasRole('instructor');
+    }
+
+    /**
+     * Verifica si el aprendiz puede acceder al módulo de estadísticas/reportes propios
+     */
+    public function canAccessStatsModule(): bool
+    {
+        return $this->can_access_stats_module && $this->hasRole('aprendiz');
     }
 
     /**

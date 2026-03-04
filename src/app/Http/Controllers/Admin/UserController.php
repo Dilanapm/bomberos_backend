@@ -67,14 +67,16 @@ class UserController extends Controller
             'role' => ['required', 'exists:roles,name'],
             'can_access_ai_module' => ['nullable', 'boolean'],
             'can_view_student_stats' => ['nullable', 'boolean'],
+            'can_access_stats_module' => ['nullable', 'boolean'],
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'can_access_ai_module' => $validated['can_access_ai_module'] ?? false,
-            'can_view_student_stats' => $validated['can_view_student_stats'] ?? false,
+            'can_access_ai_module' => $validated['can_access_ai_module'] ?? true,
+            'can_view_student_stats' => $validated['can_view_student_stats'] ?? true,
+            'can_access_stats_module' => $validated['can_access_stats_module'] ?? true,
         ]);
 
         $user->assignRole($validated['role']);
@@ -139,6 +141,7 @@ class UserController extends Controller
             'role' => ['required', 'exists:roles,name'],
             'can_access_ai_module' => ['nullable', 'boolean'],
             'can_view_student_stats' => ['nullable', 'boolean'],
+            'can_access_stats_module' => ['nullable', 'boolean'],
         ]);
 
         // Capturar cambios antes de actualizar
@@ -158,12 +161,14 @@ class UserController extends Controller
 
         // Actualizar permisos de vistas (solo para no-admin)
         if (!$user->hasRole('admin')) {
-            $oldAiAccess = $user->can_access_ai_module;
+            $oldAiAccess    = $user->can_access_ai_module;
             $oldStatsAccess = $user->can_view_student_stats;
+            $oldStatsModule = $user->can_access_stats_module;
 
             $user->update([
-                'can_access_ai_module' => $request->has('can_access_ai_module'),
+                'can_access_ai_module'   => $request->has('can_access_ai_module'),
                 'can_view_student_stats' => $request->has('can_view_student_stats'),
+                'can_access_stats_module' => $request->has('can_access_stats_module'),
             ]);
 
             if ($oldAiAccess !== $user->can_access_ai_module) {
@@ -171,6 +176,9 @@ class UserController extends Controller
             }
             if ($oldStatsAccess !== $user->can_view_student_stats) {
                 $changes['can_view_student_stats'] = ['old' => $oldStatsAccess, 'new' => $user->can_view_student_stats];
+            }
+            if ($oldStatsModule !== $user->can_access_stats_module) {
+                $changes['can_access_stats_module'] = ['old' => $oldStatsModule, 'new' => $user->can_access_stats_module];
             }
         }
 

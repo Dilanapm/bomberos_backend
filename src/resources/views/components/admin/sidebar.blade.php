@@ -29,6 +29,11 @@
       <span>Gestión de Usuarios</span>
     </x-admin.nav-link>
 
+    <x-admin.nav-link href="{{ route('admin.statistics') }}" :active="request()->routeIs('admin.statistics')">
+      <x-lucide-bar-chart-2 class="w-5 h-5" />
+      <span>Estadísticas</span>
+    </x-admin.nav-link>
+
     <x-admin.nav-link href="{{ route('admin.passkeys.ui') }}" :active="request()->routeIs('admin.passkeys.*')">
       <x-lucide-fingerprint class="w-5 h-5" />
       <span>Mis Passkeys</span>

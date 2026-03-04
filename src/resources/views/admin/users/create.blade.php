@@ -177,6 +177,28 @@
               <x-lucide-bar-chart-3 class="w-5 h-5 text-primary-5 dark:text-dark-7 flex-shrink-0" />
             </div>
 
+            <!-- Stats Module Permission (Only for aprendices) -->
+            <div x-show="selectedRole === 'aprendiz'" class="flex items-start gap-3 p-4 bg-secondary-50 dark:bg-dark-1 rounded-lg border border-secondary-200 dark:border-dark-2">
+              <input
+                type="checkbox"
+                id="can_access_stats_module"
+                name="can_access_stats_module"
+                value="1"
+                checked
+                {{ old('can_access_stats_module', true) ? 'checked' : '' }}
+                class="mt-1 w-5 h-5 text-primary-5 border-secondary-300 dark:border-dark-3 rounded focus:ring-2 focus:ring-primary-5"
+              />
+              <div class="flex-1">
+                <label for="can_access_stats_module" class="block text-sm font-semibold text-secondary-800 dark:text-secondary-100 cursor-pointer">
+                  Módulo de Reportes y Estadísticas
+                </label>
+                <p class="text-xs text-secondary-500 dark:text-secondary-400 mt-1">
+                  Permite al aprendiz ver sus propios reportes, estadísticas de progreso y análisis de evaluaciones.
+                </p>
+              </div>
+              <x-lucide-bar-chart-3 class="w-5 h-5 text-primary-5 dark:text-dark-7 flex-shrink-0" />
+            </div>
+
             <!-- Info Banner -->
             <div class="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
               <x-lucide-info class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />

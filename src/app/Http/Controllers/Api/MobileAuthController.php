@@ -195,8 +195,9 @@ class MobileAuthController extends Controller
             'email'                  => $user->email,
             'avatar_url'             => $user->avatar_url,
             'role'                   => $role,
-            'can_access_ai_module'   => $user->can_access_ai_module,
-            'can_view_student_stats' => $user->can_view_student_stats,
+            'can_access_ai_module'    => $user->can_access_ai_module,
+            'can_view_student_stats'  => $user->can_view_student_stats,
+            'can_access_stats_module' => $user->can_access_stats_module,
             'email_verified'         => ! is_null($user->email_verified_at),
         ];
     }

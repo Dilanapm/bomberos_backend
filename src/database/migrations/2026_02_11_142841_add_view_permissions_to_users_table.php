@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('can_access_ai_module')->default(false)->after('disabled_at');
-            $table->boolean('can_view_student_stats')->default(false)->after('can_access_ai_module');
+            $table->boolean('can_access_ai_module')->default(true)->after('disabled_at');
+            $table->boolean('can_view_student_stats')->default(true)->after('can_access_ai_module');
         });
     }
 

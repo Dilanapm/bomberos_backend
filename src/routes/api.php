@@ -125,6 +125,10 @@ Route::prefix('v1')->group(function () {
                 ->where('id', '[0-9]+')
                 ->name('api.v1.instructor.evaluations.show');
 
+            // Lista de TODOS los aprendices registrados (para seleccionar antes de un entrenamiento)
+            Route::get('/aprendices/all',            [EvaluationController::class, 'allAprendices'])
+                ->name('api.v1.instructor.aprendices.all');
+
             // Lista de aprendices que tienen al menos una evaluación
             Route::get('/aprendices',               [EvaluationController::class, 'aprendices'])
                 ->name('api.v1.instructor.aprendices.index');

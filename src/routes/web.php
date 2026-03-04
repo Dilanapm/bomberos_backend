@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Laragear\WebAuthn\Http\Routes as WebAuthnRoutes;
 use App\Livewire\Admin\Passkeys;
+use App\Livewire\Admin\Statistics;
 use App\Livewire\Auth\TwoFactorSetup;
 use App\Http\Controllers\Admin\UserController;
 
@@ -49,6 +50,9 @@ Route::middleware(['web', 'auth', 'verified', 'role:admin', '2fa.required', 'pre
 
         // Dashboard principal
         Route::get('/zone', fn() => view('admin.zone'))->name('admin.zone');
+
+        // Estadísticas del sistema EPP
+        Route::get('/statistics', Statistics::class)->name('admin.statistics');
 
         // Gestión de usuarios
         Route::resource('users', UserController::class)->names('admin.users');

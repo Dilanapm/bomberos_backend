@@ -722,3 +722,136 @@ $wslIp = (wsl hostname -I).Trim().Split(" ")[0]
 netsh interface portproxy delete v4tov4 listenport=8081 listenaddress=0.0.0.0
 netsh interface portproxy add v4tov4 listenport=8081 listenaddress=0.0.0.0 connectport=8081 connectaddress=$wslIp
 Write-Host "Puerto 8081 redirigido a WSL2: $wslIp"
+
+
+
+
+Endpoints de Reportes y Estadísticas — Aprendiz
+
+Headers requeridos en todos:
+Authorization: Bearer {token_aprendiz}
+X-Client-Key: {API_CLIENT_KEY}
+Condición previa: Solo mostrar la sección si can_access_ai_module = true en /auth/me.
+1. GET /api/v1/evaluations
+Historial paginado de evaluaciones. Pantalla de historial/lista de intentos.
+{
+  "success": true,
+  "data": {
+    "current_page": 1,
+    "per_page": 10,
+    "total": 8,
+    "data": [
+      {
+        "id": 42,
+        "session_id": "sess_abc123",
+        "general_score": 83.50,
+        "total_steps": 6,
+        "steps_completed": 5,
+        "correct_order": true,
+        "status": "aprobado",
+        "created_at": "2026-02-27T12:48:45.000000Z",
+        "steps": [ ... ],
+        "errors": [ ... ]
+      }
+    ]
+  }
+}
+status: "aprobado", "reprobado", "incompleto"
+Tiene paginación — implementar scroll infinito o botón "cargar más"
+2. GET /api/v1/evaluations/{id}
+Detalle completo de una evaluación. Pantalla de detalle al tocar un intento.
+{
+  "success": true,
+  "data": {
+    "id": 42,
+    "general_score": 83.50,
+    "status": "aprobado",
+    "duration_seconds": 58.30,
+    "detection_rate": 93.08,
+    "correct_order": true,
+    "recommendations": "Mejorar colocación del casco.",
+    "steps": [
+      {
+        "step_number": 1,
+        "step_name": "Pantalón y botas",
+        "score": 0.9500,
+        "status": "correcto",
+        "detected": true,
+        "feedback": "Paso realizado correctamente.",
+        "time_start": 0.0,
+        "time_end": 8.5,
+        "duration": 8.5
+      }
+    ],
+    "errors": [
+      {
+        "step_number": 3,
+        "error_type": "mala_ejecucion",
+        "description": "El casco no quedó bien ajustado.",
+        "severity": "media"
+      }
+    ],
+    "timeline": [ ... ],
+    "comments": [
+      {
+        "id": 1,
+        "comment": "Buen intento, trabaja el paso 3.",
+        "instructor": {
+          "id": 2,
+          "name": "Instructor Juan"
+        },
+        "created_at": "2026-02-28T09:00:00.000000Z"
+      }
+    ]
+  }
+}
+3. GET /api/v1/evaluations/stats
+Estadísticas personales resumidas. Pantalla principal de mis estadísticas / dashboard del aprendiz.
+{
+  "success": true,
+  "data": {
+    "total_attempts": 8,
+    "approved": 5,
+    "failed": 3,
+    "pass_rate": 62.5,
+    "average_score": 74.20,
+    "best_score": 82.18,
+
+    "resultado_mas_comun": 76.5,
+    "rango_tipico": 12.3,
+    "nivel_consistencia": "moderada",
+    "interpretacion_consistencia": "Tus resultados muestran variabilidad moderada.",
+
+    "comparacion_grupo": {
+      "mi_promedio": 74.20,
+      "promedio_grupo": 67.31,
+      "diferencia": 6.89,
+      "interpretacion": "Tu promedio está por encima de la media del grupo. ¡Sigue así!"
+    },
+
+    "last_evaluation": { ... },
+    "hardest_step": {
+      "step_number": 3,
+      "step_name": "Casco",
+      "avg_score": 54.2,
+      "attempts": 8
+    },
+    "progress": [
+      { "id": 10, "general_score": 68.0, "status": "reprobado", "steps_completed": 4, "created_at": "..." },
+      { "id": 15, "general_score": 77.5, "status": "aprobado",  "steps_completed": 6, "created_at": "..." }
+    ]
+  }
+}
+nivel_consistencia: "alta", "moderada", "baja"
+progress: últimas 10 evaluaciones en orden cronológico, usar para gráfico de línea
+hardest_step.avg_score: ya viene en porcentaje (0-100), no multiplicar por 100
+4. GET /api/v1/evaluations/analytics
+Análisis profundo. Pantalla de análisis avanzado / "Ver mi progreso detallado".
+
+Si el aprendiz no tiene evaluaciones:
+{
+  "success": true,
+  "message": "Aún no tienes evaluaciones registradas.",
+  "data": null
+}
+Si tiene evaluaciones:

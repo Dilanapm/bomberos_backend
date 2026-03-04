@@ -48,14 +48,14 @@ class AdminStatsController extends Controller
         $evalsMes    = EppEvaluation::whereDate('created_at', '>=', $mes)->count();
 
         // Pico de uso por hora (hora UTC con más evaluaciones)
-        $picoHora = EppEvaluation::selectRaw('HOUR(created_at) as hora, COUNT(*) as total')
+        $picoHora = EppEvaluation::selectRaw('EXTRACT(HOUR FROM created_at)::int as hora, COUNT(*) as total')
             ->groupBy('hora')
             ->orderByDesc('total')
             ->first();
 
         $picoUso = $picoHora
-            ? str_pad($picoHora->hora, 2, '0', STR_PAD_LEFT) . ':00-'
-            . str_pad(($picoHora->hora + 2) % 24, 2, '0', STR_PAD_LEFT) . ':00'
+            ? str_pad((string) (int) $picoHora->hora, 2, '0', STR_PAD_LEFT) . ':00-'
+            . str_pad((string) (((int) $picoHora->hora + 2) % 24), 2, '0', STR_PAD_LEFT) . ':00'
             : 'No disponible';
 
         return response()->json([
@@ -244,11 +244,11 @@ class AdminStatsController extends Controller
     {
         // Últimos 6 meses
         $meses = EppEvaluation::selectRaw(
-            'DATE_FORMAT(created_at, "%Y-%m") as periodo,
-             DATE_FORMAT(created_at, "%M %Y") as nombre_mes,
+            "TO_CHAR(created_at, 'YYYY-MM') as periodo,
+             TO_CHAR(created_at, 'FMMonth YYYY') as nombre_mes,
              AVG(general_score)               as promedio,
-             SUM(CASE WHEN status = "aprobado" THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as aprobacion,
-             COUNT(*) as total'
+             SUM(CASE WHEN status = 'aprobado' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as aprobacion,
+             COUNT(*) as total"
         )
             ->where('created_at', '>=', now()->subMonths(6))
             ->groupBy('periodo', 'nombre_mes')

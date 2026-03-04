@@ -16,5 +16,8 @@ class DatabaseSeeder extends Seeder
 
         // 2. Usuario administrador (solo acceso web, no usa la API)
         $this->call(AdminUserSeeder::class);
+
+        // 3. Instructores, aprendices y evaluaciones EPP de demostración
+        $this->call(EppDemoSeeder::class);
     }
 }

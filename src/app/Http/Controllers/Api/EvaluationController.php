@@ -400,6 +400,49 @@ class EvaluationController extends Controller
     //  Lista de aprendices que tienen al menos una evaluación, con
     //  sus estadísticas resumidas.
     // ──────────────────────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────────
+    //  GET /api/v1/instructor/aprendices/all
+    //  Lista TODOS los aprendices activos registrados en el sistema.
+    //  Usado por Flutter antes de iniciar un entrenamiento: el instructor
+    //  selecciona un aprendiz de esta lista y comienza la grabación.
+    // ──────────────────────────────────────────────────────────────
+    public function allAprendices(): JsonResponse
+    {
+        $aprendices = User::role('aprendiz')
+            ->whereNull('disabled_at')          // Solo aprendices activos
+            ->withCount('evaluations')
+            ->with([
+                'evaluations' => fn($q) => $q
+                    ->selectRaw('user_id, AVG(general_score) as avg_score, MAX(general_score) as best_score, MAX(created_at) as last_eval')
+                    ->groupBy('user_id'),
+            ])
+            ->orderBy('name')
+            ->get()
+            ->map(function (User $user) {
+                $eval = $user->evaluations->first();
+                return [
+                    'id'                => $user->id,
+                    'name'              => $user->name,
+                    'username'          => $user->username ?? null,
+                    'avatar_url'        => $user->avatar_url ?? null,
+                    'evaluations_count' => $user->evaluations_count,
+                    'avg_score'         => $eval ? round((float) $eval->avg_score, 2) : null,
+                    'best_score'        => $eval ? round((float) $eval->best_score, 2) : null,
+                    'last_evaluation'   => $eval?->last_eval,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'total'   => $aprendices->count(),
+            'data'    => $aprendices,
+        ]);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  GET /api/v1/instructor/aprendices
+    //  Lista aprendices que ya tienen al menos una evaluación.
+    // ──────────────────────────────────────────────────────────────
     public function aprendices(): JsonResponse
     {
         $aprendices = User::role('aprendiz')
