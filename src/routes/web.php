@@ -6,6 +6,7 @@ use App\Livewire\Admin\Passkeys;
 use App\Livewire\Admin\Statistics;
 use App\Livewire\Auth\TwoFactorSetup;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,9 @@ Route::middleware(['web', 'auth', 'verified', 'role:admin', '2fa.required', 'pre
 
         // Estadísticas del sistema EPP
         Route::get('/statistics', Statistics::class)->name('admin.statistics');
+
+        // Generación de reportes PDF
+        Route::get('/reports/statistics', [ReportController::class, 'statistics'])->name('admin.reports.statistics');
 
         // Gestión de usuarios
         Route::resource('users', UserController::class)->names('admin.users');

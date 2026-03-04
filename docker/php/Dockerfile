@@ -8,6 +8,10 @@ RUN apk add --no-cache \
 
 RUN docker-php-ext-install pdo pdo_pgsql mbstring zip intl
 
+RUN apk add --no-cache freetype-dev libjpeg-turbo-dev libpng-dev \
+ && docker-php-ext-configure gd --with-freetype --with-jpeg \
+ && docker-php-ext-install gd
+
 RUN pecl install redis \
  && docker-php-ext-enable redis
 

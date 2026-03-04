@@ -33,26 +33,26 @@ class EppDemoSeeder extends Seeder
 {
     // ── Definición de pasos EPP ───────────────────────────────────
     private const STEPS = [
-        1 => ['name' => 'Pantalón y botas',  'base' => [0.72, 0.95]],
-        2 => ['name' => 'Capucha',           'base' => [0.38, 0.70]],  // paso más difícil
-        3 => ['name' => 'Chaqueta',          'base' => [0.58, 0.85]],
-        4 => ['name' => 'Guantes',           'base' => [0.62, 0.90]],
-        5 => ['name' => 'Casco y visor',     'base' => [0.52, 0.82]],
-        6 => ['name' => 'Postura final',     'base' => [0.78, 0.98]],
+        1 => ['name' => 'Colocación de pantalón',           'base' => [0.72, 0.95]],
+        2 => ['name' => 'Colocación de esclavina o capucha', 'base' => [0.38, 0.70]],  // paso más difícil
+        3 => ['name' => 'Colocación de chaqueta',            'base' => [0.58, 0.85]],
+        4 => ['name' => 'Colocación de casco',               'base' => [0.62, 0.88]],
+        5 => ['name' => 'Colocación de guantes',             'base' => [0.55, 0.85]],
+        6 => ['name' => 'Postura final',                     'base' => [0.78, 0.98]],
     ];
 
     // ── Tipos de error posibles por paso ─────────────────────────
     // error_type enum: paso_omitido | orden_incorrecto | mala_ejecucion | tiempo_insuficiente | deteccion_fallida
     private const STEP_ERRORS = [
-        1 => [['type' => 'orden_incorrecto',   'desc' => 'Se colocó la bota antes del pantalón',         'sev' => 'media']],
+        1 => [['type' => 'orden_incorrecto',   'desc' => 'Se colocó el pantalón después de la chaqueta',        'sev' => 'media']],
         2 => [
-            ['type' => 'mala_ejecucion',       'desc' => 'La capucha no cubre completamente el cuello',  'sev' => 'alta'],
-            ['type' => 'tiempo_insuficiente',   'desc' => 'Tardó más de 5 segundos en ajustar capucha',  'sev' => 'baja'],
+            ['type' => 'mala_ejecucion',       'desc' => 'La esclavina/capucha no cubre completamente el cuello', 'sev' => 'alta'],
+            ['type' => 'tiempo_insuficiente',  'desc' => 'Tardó más de 5 segundos en ajustar la capucha',         'sev' => 'baja'],
         ],
-        3 => [['type' => 'mala_ejecucion',     'desc' => 'Chaqueta sin cerrar completamente',            'sev' => 'alta']],
-        4 => [['type' => 'deteccion_fallida',  'desc' => 'Guante izquierdo no detectado correctamente',  'sev' => 'media']],
-        5 => [['type' => 'mala_ejecucion',     'desc' => 'Visor del casco quedó semi-abierto',           'sev' => 'alta']],
-        6 => [['type' => 'paso_omitido',       'desc' => 'Verificación de postura final no realizada',   'sev' => 'baja']],
+        3 => [['type' => 'mala_ejecucion',     'desc' => 'Chaqueta sin cerrar completamente',                    'sev' => 'alta']],
+        4 => [['type' => 'mala_ejecucion',     'desc' => 'Casco no asegurado correctamente en la barbilla',      'sev' => 'alta']],
+        5 => [['type' => 'deteccion_fallida',  'desc' => 'Guante izquierdo no detectado correctamente',          'sev' => 'media']],
+        6 => [['type' => 'paso_omitido',       'desc' => 'Verificación de postura final no realizada',           'sev' => 'baja']],
     ];
 
     // ── Perfiles de instructores ──────────────────────────────────
@@ -212,7 +212,7 @@ class EppDemoSeeder extends Seeder
                 'detection_rate'        => round(rand(72, 99) / 100, 2),
                 'status'                => $evalStatus,
                 'recommendations'       => $evalStatus !== 'aprobado'
-                    ? 'Reforzar Paso 2 (Capucha) y verificar secuencia correcta de colocación.'
+                    ? 'Reforzar Paso 2 (Esclavina/Capucha) y verificar secuencia correcta de colocación.'
                     : null,
                 'created_at'            => $createdAt,
                 'updated_at'            => $createdAt,

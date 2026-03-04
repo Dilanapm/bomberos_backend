@@ -1,13 +1,22 @@
 <div class="space-y-6">
 
     {{-- ── Header card ───────────────────────────────────────── --}}
-    <div class="bg-gradient-to-r from-primary-5 to-primary-6 rounded-xl shadow-lg p-8 text-white">
+    <div x-data="{ reportModal: false }" class="bg-gradient-to-r from-primary-5 to-primary-6 rounded-xl shadow-lg p-8 text-white">
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-2xl font-bold mb-2">Estadísticas del Sistema</h3>
           <p class="text-primary-1 text-sm">Análisis de evaluaciones EPP · Actualizado: {{ $lastUpdated ?: '—' }}</p>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
+          {{-- Generar Reporte --}}
+          <button
+            @click="reportModal = true"
+            class="flex items-center gap-2 px-4 py-2 bg-white text-primary-6 hover:bg-primary-1 rounded-lg text-sm font-semibold transition-all shadow"
+          >
+            <x-lucide-file-down class="w-4 h-4" />
+            Generar Reporte
+          </button>
+          {{-- Actualizar --}}
           <button
             wire:click="refresh"
             wire:loading.attr="disabled"
@@ -20,6 +29,114 @@
           <div class="hidden md:block">
             <x-lucide-bar-chart-2 class="w-20 h-20 text-white opacity-20" />
           </div>
+        </div>
+      </div>
+
+      {{-- ── Modal de Generación de Reporte ── --}}
+      <div
+        x-show="reportModal"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style="display:none;"
+      >
+        {{-- Overlay --}}
+        <div class="absolute inset-0 bg-secondary-900 bg-opacity-60" @click="reportModal = false"></div>
+
+        {{-- Panel --}}
+        <div class="relative bg-white dark:bg-dark-0 rounded-2xl shadow-2xl w-full max-w-md p-6 z-10" @click.stop>
+
+          {{-- Cabecera --}}
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center justify-center w-10 h-10 bg-primary-1 dark:bg-dark-2 rounded-lg">
+                <x-lucide-file-text class="w-5 h-5 text-primary-5 dark:text-dark-8" />
+              </div>
+              <div>
+                <h3 class="font-bold text-secondary-800 dark:text-secondary-100">Generar Reporte PDF</h3>
+                <p class="text-xs text-secondary-500 dark:text-secondary-400">Elige las secciones a incluir</p>
+              </div>
+            </div>
+            <button @click="reportModal = false" class="text-secondary-400 hover:text-secondary-600 dark:hover:text-secondary-200 transition-colors">
+              <x-lucide-x class="w-5 h-5" />
+            </button>
+          </div>
+
+          {{-- Formulario de secciones --}}
+          <form method="GET" action="{{ route('admin.reports.statistics') }}" @submit="reportModal = false">
+            <div class="space-y-3 mb-6">
+
+              <label class="flex items-center gap-3 p-3 rounded-lg border border-secondary-200 dark:border-dark-2 hover:bg-secondary-50 dark:hover:bg-dark-1 cursor-pointer transition-colors">
+                <input type="checkbox" name="sections[]" value="global" checked
+                  class="w-4 h-4 rounded accent-primary-5">
+                <div class="flex items-center gap-2">
+                  <x-lucide-layout-dashboard class="w-4 h-4 text-primary-5 dark:text-dark-8 flex-shrink-0" />
+                  <div>
+                    <p class="text-sm font-medium text-secondary-800 dark:text-secondary-100">Métricas Globales</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">Usuarios, evaluaciones, tasa de aprobación, tiempos</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="flex items-center gap-3 p-3 rounded-lg border border-secondary-200 dark:border-dark-2 hover:bg-secondary-50 dark:hover:bg-dark-1 cursor-pointer transition-colors">
+                <input type="checkbox" name="sections[]" value="chart" checked
+                  class="w-4 h-4 rounded accent-primary-5">
+                <div class="flex items-center gap-2">
+                  <x-lucide-bar-chart-2 class="w-4 h-4 text-primary-5 dark:text-dark-8 flex-shrink-0" />
+                  <div>
+                    <p class="text-sm font-medium text-secondary-800 dark:text-secondary-100">Actividad — Últimos 30 días</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">Tabla visual de evaluaciones por día</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="flex items-center gap-3 p-3 rounded-lg border border-secondary-200 dark:border-dark-2 hover:bg-secondary-50 dark:hover:bg-dark-1 cursor-pointer transition-colors">
+                <input type="checkbox" name="sections[]" value="instructors" checked
+                  class="w-4 h-4 rounded accent-primary-5">
+                <div class="flex items-center gap-2">
+                  <x-lucide-trophy class="w-4 h-4 text-primary-5 dark:text-dark-8 flex-shrink-0" />
+                  <div>
+                    <p class="text-sm font-medium text-secondary-800 dark:text-secondary-100">Comparativa de Instructores</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">Ranking, promedios y tasas de aprobación</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="flex items-center gap-3 p-3 rounded-lg border border-secondary-200 dark:border-dark-2 hover:bg-secondary-50 dark:hover:bg-dark-1 cursor-pointer transition-colors">
+                <input type="checkbox" name="sections[]" value="steps" checked
+                  class="w-4 h-4 rounded accent-primary-5">
+                <div class="flex items-center gap-2">
+                  <x-lucide-layers class="w-4 h-4 text-primary-5 dark:text-dark-8 flex-shrink-0" />
+                  <div>
+                    <p class="text-sm font-medium text-secondary-800 dark:text-secondary-100">Análisis de Pasos EPP</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">Tasa de éxito y fallo por cada paso del protocolo</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            {{-- Acciones --}}
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                @click="reportModal = false"
+                class="flex-1 px-4 py-2 border border-secondary-200 dark:border-dark-2 text-secondary-600 dark:text-secondary-300 hover:bg-secondary-50 dark:hover:bg-dark-1 rounded-lg text-sm font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary-5 hover:bg-primary-6 text-white rounded-lg text-sm font-semibold transition-colors shadow"
+              >
+                <x-lucide-download class="w-4 h-4" />
+                Descargar PDF
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
