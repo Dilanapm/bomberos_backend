@@ -32,8 +32,8 @@
       const colors = {
         success: { bg: 'bg-success-50', border: 'border-success-200', text: 'text-success-800', icon: 'text-success-600' },
         error: { bg: 'bg-primary-50', border: 'border-primary-200', text: 'text-primary-800', icon: 'text-primary-600' },
-        warning: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', icon: 'text-amber-600' },
-        info: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: 'text-blue-600' }
+        warning: { bg: 'bg-accent-200', border: 'border-accent-400', text: 'text-accent-500', icon: 'text-accent-500' },
+        info: { bg: 'bg-secondary-50', border: 'border-info-500', text: 'text-info-600', icon: 'text-info-500' }
       };
       return colors[type] || colors.info;
     }
@@ -89,7 +89,7 @@
            'text-success-600 dark:text-success-400': notification.type === 'success',
            'text-dark-10 dark:text-dark-10': notification.type === 'error',
            'text-accent-500 dark:text-accent-500': notification.type === 'warning',
-           'text-blue-800 dark:text-blue-200': notification.type === 'info'
+           'text-info-600 dark:text-info-400': notification.type === 'info'
          }"
          x-text="notification.message"></p>
 

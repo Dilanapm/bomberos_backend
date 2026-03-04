@@ -246,18 +246,42 @@
         <tr>
           <td style="width:50%;vertical-align:top;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px;">
             <div style="font-size:10px;font-weight:700;color:#475569;margin-bottom:6px;">Desglose por Estado</div>
-            <div class="stat-row"><span class="stat-label">Aprobadas</span><span class="stat-value text-green">{{ $global['aprobadas'] }}</span></div>
-            <div class="stat-row"><span class="stat-label">Reprobadas</span><span class="stat-value text-red">{{ $global['reprobadas'] }}</span></div>
-            <div class="stat-row" style="border:0"><span class="stat-label">Incompletas</span><span class="stat-value text-yellow">{{ $global['incompletas'] }}</span></div>
+            <div class="stat-row">
+              <span class="stat-label">✔ Aprobadas <span style="font-size:8px;color:#94a3b8;">(aprendices que alcanzaron ≥70 puntos)</span></span>
+              <span class="stat-value text-green">{{ $global['aprobadas'] }} <span style="font-weight:400;font-size:9px;">({{ $global['total_evals'] > 0 ? round($global['aprobadas']/$global['total_evals']*100,1) : 0 }}%)</span></span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">✖ Reprobadas <span style="font-size:8px;color:#94a3b8;">(no llegaron al mínimo de 70 puntos)</span></span>
+              <span class="stat-value text-red">{{ $global['reprobadas'] }} <span style="font-weight:400;font-size:9px;">({{ $global['total_evals'] > 0 ? round($global['reprobadas']/$global['total_evals']*100,1) : 0 }}%)</span></span>
+            </div>
+            <div class="stat-row" style="border:0">
+              <span class="stat-label">○ Incompletas <span style="font-size:8px;color:#94a3b8;">(iniciadas pero no terminadas)</span></span>
+              <span class="stat-value text-yellow">{{ $global['incompletas'] }} <span style="font-weight:400;font-size:9px;">({{ $global['total_evals'] > 0 ? round($global['incompletas']/$global['total_evals']*100,1) : 0 }}%)</span></span>
+            </div>
           </td>
           <td style="width:50%;vertical-align:top;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px;">
             <div style="font-size:10px;font-weight:700;color:#475569;margin-bottom:6px;">Uso del Sistema</div>
-            <div class="stat-row"><span class="stat-label">Hoy</span><span class="stat-value">{{ $global['evals_hoy'] }} evaluaciones</span></div>
-            <div class="stat-row"><span class="stat-label">Esta semana</span><span class="stat-value">{{ $global['evals_semana'] }} evaluaciones</span></div>
-            <div class="stat-row" style="border:0"><span class="stat-label">Último mes</span><span class="stat-value">{{ $global['evals_mes'] }} evaluaciones</span></div>
+            <div class="stat-row"><span class="stat-label">Hoy </span><span class="stat-value">{{ $global['evals_hoy'] }} evaluaciones</span></div>
+            <div class="stat-row"><span class="stat-label">Esta semana </span><span class="stat-value">{{ $global['evals_semana'] }} evaluaciones</span></div>
+            <div class="stat-row" style="border:0"><span class="stat-label">Último mes </span><span class="stat-value">{{ $global['evals_mes'] }} evaluaciones</span></div>
           </td>
         </tr>
       </table>
+
+      {{-- Resumen interpretado --}}
+      @php
+        $tasa = $global['tasa_aprobacion'];
+        if ($tasa >= 80)       $resMsg = "El sistema muestra un rendimiento excelente: {$tasa}% de aprobación. El nivel de preparación general es alto.";
+        elseif ($tasa >= 60)   $resMsg = "El rendimiento es aceptable pero mejorable: {$tasa}% de aprobación. Hay margen para reforzar el entrenamiento.";
+        elseif ($tasa >= 40)   $resMsg = "El rendimiento está por debajo de lo esperado: solo el {$tasa}% aprueba. Se recomienda revisar el plan de entrenamiento con los instructores.";
+        else                   $resMsg = "El rendimiento es crítico: solo el {$tasa}% aprueba. Se requiere una revisión urgente del proceso de entrenamiento EPP.";
+        $pctInc = $global['total_evals'] > 0 ? round($global['incompletas'] / $global['total_evals'] * 100, 1) : 0;
+        if ($pctInc >= 20) $resMsg .= " Además, el {$pctInc}% de las evaluaciones quedó incompleto, lo que puede indicar abandono o problemas técnicos durante la prueba.";
+      @endphp
+      <div style="margin-top:10px;border:1px solid #cbd5e1;border-left:3px solid #64748b;border-radius:4px;padding:10px 14px;background:#f8fafc;">
+        <p style="margin:0 0 2px;font-size:9.5px;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.4px;">Resumen del período</p>
+        <p style="margin:0;font-size:9px;color:#334155;">{{ $resMsg }}</p>
+      </div>
       </div>{{-- /section-body --}}
     </div>
   @endif
@@ -417,6 +441,31 @@
             @endforeach
           </tbody>
         </table>
+
+        @php
+          $instCol   = collect($instructors);
+          $mejorInst = $instCol->first();
+          $peorInst  = $instCol->last();
+        @endphp
+        @if($mejorInst && $instCol->count() > 1)
+        <div style="margin-top:12px;border:1px solid #cbd5e1;border-left:3px solid #64748b;border-radius:4px;padding:10px 14px;background:#f8fafc;">
+          <p style="margin:0 0 4px;font-size:9.5px;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.4px;">Resumen del período</p>
+          <p style="margin:0 0 5px;font-size:9px;color:#334155;">
+            <strong>Mejor grupo:</strong> {{ $mejorInst['name'] }} &mdash;
+            promedio de <strong>{{ $mejorInst['promedio_grupo'] }}/100</strong>,
+            con un <strong>{{ $mejorInst['tasa_aprobacion'] }}%</strong> de aprendices aprobados
+            ({{ $mejorInst['aprendices'] }} aprendice{{ $mejorInst['aprendices'] !== 1 ? 's' : '' }}).
+          </p>
+          <p style="margin:0;font-size:9px;color:#334155;">
+            <strong>Grupo que más necesita apoyo:</strong> {{ $peorInst['name'] }} &mdash;
+            promedio de <strong>{{ $peorInst['promedio_grupo'] }}/100</strong>,
+            <strong>{{ $peorInst['tasa_aprobacion'] }}%</strong> de aprobación.
+            @if($peorInst['alerta'] ?? null)
+              {{ $peorInst['alerta'] }}.
+            @endif
+          </p>
+        </div>
+        @endif
       @endif
       </div>{{-- /section-body --}}
     </div>
@@ -477,6 +526,30 @@
             </tbody>
           </table>
         </div>
+
+        @php
+          $stepsCol  = collect($steps);
+          $mejorPaso = $stepsCol->sortByDesc('promedio')->first();
+          $peorPaso  = $stepsCol->sortBy('promedio')->first();
+        @endphp
+        @if($mejorPaso && $stepsCol->count() > 1)
+        <div style="margin-top:12px;border:1px solid #cbd5e1;border-left:3px solid #64748b;border-radius:4px;padding:10px 14px;background:#f8fafc;">
+          <p style="margin:0 0 4px;font-size:9.5px;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.4px;">Resumen del análisis</p>
+          <p style="margin:0 0 5px;font-size:9px;color:#334155;">
+            <strong>Paso mejor dominado:</strong>
+            Paso {{ $mejorPaso['numero'] }} &mdash; {{ $mejorPaso['nombre'] }}.
+            El <strong>{{ $mejorPaso['promedio'] }}%</strong> de los aprendices lo realiza correctamente;
+            solo el <strong>{{ $mejorPaso['tasa_fallo'] }}%</strong> falla en este paso.
+          </p>
+          <p style="margin:0;font-size:9px;color:#334155;">
+            <strong>Paso que más les cuesta:</strong>
+            Paso {{ $peorPaso['numero'] }} &mdash; {{ $peorPaso['nombre'] }}.
+            Solo el <strong>{{ $peorPaso['promedio'] }}%</strong> lo realiza correctamente;
+            el <strong>{{ $peorPaso['tasa_fallo'] }}%</strong> de los aprendices falla aquí.
+            Se recomienda reforzar el entrenamiento en este paso.
+          </p>
+        </div>
+        @endif
       @endif
       </div>{{-- /section-body --}}
     </div>

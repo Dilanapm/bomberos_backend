@@ -129,13 +129,27 @@ class ReportController extends Controller
                     $tasaAprobacion = count($scores) > 0
                         ? round(($aprobadas / count($scores)) * 100, 1)
                         : 0.0;
+                    $consistencia   = StatsHelper::consistencyLevel($scores);
+                    $mean           = StatsHelper::mean($scores);
+
+                    $alerta = null;
+                    if ($tasaAprobacion === 0.0) {
+                        $alerta = 'Ningún aprendiz ha aprobado aún';
+                    } elseif ($tasaAprobacion < 40) {
+                        $alerta = 'Tasa de aprobación muy baja (< 40%)';
+                    } elseif ($mean < 60) {
+                        $alerta = 'Promedio del grupo por debajo de 60 puntos';
+                    } elseif ($consistencia === 'baja') {
+                        $alerta = 'Alta variabilidad en puntajes del grupo';
+                    }
 
                     return [
                         'name'            => $instructor->name,
                         'aprendices'      => $evals->groupBy('user_id')->count(),
-                        'promedio_grupo'  => round(StatsHelper::mean($scores), 2),
+                        'promedio_grupo'  => round($mean, 2),
                         'tasa_aprobacion' => $tasaAprobacion,
-                        'consistencia'    => StatsHelper::consistencyLevel($scores),
+                        'consistencia'    => $consistencia,
+                        'alerta'          => $alerta,
                     ];
                 })
                 ->filter()

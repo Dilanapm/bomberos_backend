@@ -15,9 +15,9 @@
     </div>
 
     <!-- Info Alert -->
-    <div class="bg-blue-50 dark:bg-dark-1 border border-secondary-700 dark:border-secondary-200 rounded-xl p-4 mb-6">
+    <div class="bg-secondary-50 dark:bg-dark-1 border border-secondary-200 dark:border-secondary-200 rounded-xl p-4 mb-6">
       <div class="flex items-start gap-3">
-        <x-lucide-info class="w-5 h-5 text-blue-600 dark:text-secondary-400 flex-shrink-0 mt-0.5" />
+        <x-lucide-info class="w-5 h-5 text-info-500 dark:text-secondary-400 flex-shrink-0 mt-0.5" />
         <div>
           <h3 class="text-sm font-semibold text-secondary-900 dark:text-secondary-100 mb-1">Roles Disponibles</h3>
           <ul class="text-sm text-secondary-900 dark:text-secondary-300 space-y-1">
@@ -200,9 +200,9 @@
             </div>
 
             <!-- Info Banner -->
-            <div class="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
-              <x-lucide-info class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-              <p class="text-sm text-blue-800 dark:text-blue-200">
+            <div class="flex items-start gap-3 p-4 bg-secondary-50 dark:bg-dark-1 rounded-lg border border-info-500 dark:border-info-500">
+              <x-lucide-info class="w-5 h-5 text-info-500 dark:text-info-400 flex-shrink-0 mt-0.5" />
+              <p class="text-sm text-secondary-700 dark:text-secondary-300">
                 Estos permisos solo aplican para la aplicación móvil. Los cambios se reflejarán inmediatamente después de crear el usuario.
               </p>
             </div>

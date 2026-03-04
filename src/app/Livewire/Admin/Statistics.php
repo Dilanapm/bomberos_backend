@@ -19,6 +19,11 @@ class Statistics extends Component
     public float  $tasaAprobacion   = 0.0;
     public float  $tiempoPromedio   = 0.0;
 
+    // ── Estado de evaluaciones ────────────────────────────────────
+    public int    $evalsAprobadas   = 0;
+    public int    $evalsReprobadas  = 0;
+    public int    $evalsIncompletas = 0;
+
     // ── Usage summary ─────────────────────────────────────────────
     public int    $evalsHoy         = 0;
     public int    $evalsSemana      = 0;
@@ -48,7 +53,10 @@ class Statistics extends Component
     public function refresh(): void
     {
         $this->loadStats();
-        $this->dispatch('stats-refreshed');
+        $this->dispatch('stats-refreshed',
+            chartLabels: $this->chartLabels,
+            chartValues: $this->chartValues,
+        );
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -68,7 +76,11 @@ class Statistics extends Component
         $this->totalUsuarios  = User::count();
         $this->totalEvals     = EppEvaluation::count();
 
-        $aprobadas = EppEvaluation::where('status', 'aprobado')->count();
+        $this->evalsAprobadas   = EppEvaluation::where('status', 'aprobado')->count();
+        $this->evalsReprobadas  = EppEvaluation::where('status', 'reprobado')->count();
+        $this->evalsIncompletas = EppEvaluation::where('status', 'incompleto')->count();
+
+        $aprobadas = $this->evalsAprobadas;
         $this->tasaAprobacion = $this->totalEvals > 0
             ? round(($aprobadas / $this->totalEvals) * 100, 1)
             : 0.0;
@@ -145,6 +157,18 @@ class Statistics extends Component
                     : 0.0;
                 $consistencia   = StatsHelper::consistencyLevel($scores);
 
+                // Genera una alerta si alguno de estos criterios se cumple:
+                $alerta = null;
+                if ($tasaAprobacion === 0.0) {
+                    $alerta = 'Ningún aprendiz ha aprobado aún';
+                } elseif ($tasaAprobacion < 40) {
+                    $alerta = 'Tasa de aprobación muy baja (< 40%)';
+                } elseif (StatsHelper::mean($scores) < 60) {
+                    $alerta = 'Promedio del grupo por debajo de 60 puntos';
+                } elseif ($consistencia === 'baja') {
+                    $alerta = 'Alta variabilidad en puntajes del grupo';
+                }
+
                 return [
                     'id'              => $instructor->id,
                     'name'            => $instructor->name,
@@ -152,9 +176,7 @@ class Statistics extends Component
                     'promedio_grupo'  => round(StatsHelper::mean($scores), 2),
                     'tasa_aprobacion' => $tasaAprobacion,
                     'consistencia'    => $consistencia,
-                    'alerta'          => $consistencia === 'baja'
-                        ? 'Alta variabilidad en puntajes'
-                        : null,
+                    'alerta'          => $alerta,
                 ];
             })
             ->filter()
@@ -183,14 +205,26 @@ class Statistics extends Component
 
         $minAvg = $pasos->min('avg_score_pct');
 
-        $this->steps = $pasos->map(function ($paso) use ($minAvg) {
+        // Clasificar variación de forma relativa al dataset:
+        // ordena los std de menor a mayor y divide en terciles (baja/media/alta)
+        // así siempre se muestran diferencias reales entre pasos.
+        $sortedStd = $pasos->pluck('std_score')
+            ->map(fn ($v) => (float) $v)
+            ->sort()
+            ->values();
+
+        $n   = $sortedStd->count();
+        $p33 = $n > 0 ? (float) $sortedStd->get((int) floor(($n - 1) * 0.33)) : 10.0;
+        $p67 = $n > 0 ? (float) $sortedStd->get((int) floor(($n - 1) * 0.67)) : 20.0;
+
+        $this->steps = $pasos->map(function ($paso) use ($minAvg, $p33, $p67) {
             $avg   = round((float) $paso->avg_score_pct, 1);
             $fallo = round((float) $paso->tasa_fallo, 1);
-            $std   = round((float) $paso->std_score, 1);
+            $std   = (float) $paso->std_score;
 
-            if ($std > 20) {
+            if ($std >= $p67) {
                 $variacion = 'alta';
-            } elseif ($std > 10) {
+            } elseif ($std >= $p33) {
                 $variacion = 'media';
             } else {
                 $variacion = 'baja';
