@@ -27,3 +27,9 @@ yarn-error.log
 src/_ide_helper.php
 src/_ide_helper_models.php
 src/.phpstorm.meta.php
+
+# agregando archivos de .VsCodeCounter .VSCodeCounter
+.vscode/
+.vscode/.counter
+.vscode/.counterignore
+.VSCodeCounter/
